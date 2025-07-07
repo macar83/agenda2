@@ -26,18 +26,6 @@
         "recurring": null,
         "timeSpent": 0,
         "createdAt": "2025-07-05T12:00"
-      },
-      {
-        "id": 1751925534313,
-        "title": "task 2358",
-        "details": "",
-        "completed": false,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T21:58:54.313Z"
       }
     ]
   },
@@ -140,18 +128,6 @@
           "recurring": null,
           "timeSpent": 0,
           "createdAt": "2025-07-05T12:00"
-        },
-        {
-          "id": 1751925534313,
-          "title": "task 2358",
-          "details": "",
-          "completed": false,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T21:58:54.313Z"
         }
       ]
     }
@@ -209,6 +185,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T21:59:26.997Z",
+  "lastSync": "2025-07-07T22:01:54.080Z",
   "syncedFrom": "web"
 }
