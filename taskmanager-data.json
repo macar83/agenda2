@@ -53,25 +53,6 @@
         "recurring": null,
         "timeSpent": 0,
         "createdAt": "2025-07-07T16:30:01.011Z"
-      },
-      {
-        "id": 1751927126541,
-        "title": "task 0025",
-        "details": "",
-        "completed": false,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [
-          {
-            "id": 1751927447587,
-            "text": "test",
-            "time": "2025-07-07T22:30:47.587Z",
-            "author": "Tu"
-          }
-        ],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T22:25:26.541Z"
       }
     ]
   },
@@ -126,25 +107,6 @@
           "recurring": null,
           "timeSpent": 0,
           "createdAt": "2025-07-07T16:30:01.011Z"
-        },
-        {
-          "id": 1751927126541,
-          "title": "task 0025",
-          "details": "",
-          "completed": false,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [
-            {
-              "id": 1751927447587,
-              "text": "test",
-              "time": "2025-07-07T22:30:47.587Z",
-              "author": "Tu"
-            }
-          ],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T22:25:26.541Z"
         }
       ]
     },
@@ -262,6 +224,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T22:31:14.258Z",
+  "lastSync": "2025-07-07T22:33:35.691Z",
   "syncedFrom": "web"
 }
