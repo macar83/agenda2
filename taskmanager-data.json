@@ -46,6 +46,18 @@
         "recurring": null,
         "timeSpent": 0,
         "createdAt": "2025-07-07T15:27:20.302Z"
+      },
+      {
+        "id": 1751905283625,
+        "title": "Ciccio pasticcio 3",
+        "details": "",
+        "completed": false,
+        "reminder": "",
+        "priority": "medium",
+        "comments": [],
+        "recurring": null,
+        "timeSpent": 0,
+        "createdAt": "2025-07-07T16:21:23.625Z"
       }
     ]
   },
@@ -134,6 +146,18 @@
           "recurring": null,
           "timeSpent": 0,
           "createdAt": "2025-07-07T15:27:20.302Z"
+        },
+        {
+          "id": 1751905283625,
+          "title": "Ciccio pasticcio 3",
+          "details": "",
+          "completed": false,
+          "reminder": "",
+          "priority": "medium",
+          "comments": [],
+          "recurring": null,
+          "timeSpent": 0,
+          "createdAt": "2025-07-07T16:21:23.625Z"
         }
       ]
     },
@@ -217,6 +241,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T16:19:22.368Z",
+  "lastSync": "2025-07-07T16:21:23.631Z",
   "syncedFrom": "web"
 }
