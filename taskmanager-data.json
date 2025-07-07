@@ -26,6 +26,18 @@
         "recurring": null,
         "timeSpent": 0,
         "createdAt": "2025-07-05T12:00"
+      },
+      {
+        "id": 1751929145043,
+        "title": "nada",
+        "details": "",
+        "reminder": "",
+        "priority": "medium",
+        "recurring": null,
+        "completed": true,
+        "comments": [],
+        "timeSpent": 0,
+        "createdAt": "2025-07-07T22:59:05.043Z"
       }
     ]
   },
@@ -140,17 +152,27 @@
           "recurring": null,
           "timeSpent": 0,
           "createdAt": "2025-07-05T12:00"
+        },
+        {
+          "id": 1751929145043,
+          "title": "nada",
+          "details": "",
+          "reminder": "",
+          "priority": "medium",
+          "recurring": null,
+          "completed": true,
+          "comments": [],
+          "timeSpent": 0,
+          "createdAt": "2025-07-07T22:59:05.043Z"
         }
       ]
     }
   ],
   "weather": {
-    "temp": 25,
-    "condition": "Poco nuvoloso",
-    "humidity": 66,
-    "wind": 48,
-    "location": "Roma",
-    "lastUpdate": "01:19"
+    "temp": 24,
+    "condition": "Soleggiato",
+    "humidity": 65,
+    "wind": 12
   },
   "news": [
     {
@@ -190,15 +212,15 @@
     }
   ],
   "stats": {
-    "today": 7,
+    "today": 8,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 151,
+    "totalCompleted": 152,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T23:20:00.566Z",
+  "lastSync": "2025-07-07T23:21:28.153Z",
   "syncedFrom": "web"
 }
