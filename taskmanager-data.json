@@ -1,0 +1,172 @@
+{
+  "theme": "light",
+  "soundEnabled": true,
+  "selectedSound": "bell",
+  "currentView": "overview",
+  "selectedList": null,
+  "lists": [
+    {
+      "id": 1,
+      "name": "Lavoro",
+      "color": "#3b82f6",
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Preparare presentazione",
+          "details": "Slide per il meeting di venerdì",
+          "completed": true,
+          "reminder": "2025-07-07T14:00",
+          "priority": "high",
+          "comments": [
+            {
+              "id": 1,
+              "text": "Ricorda di includere i grafici Q2",
+              "time": "2025-07-06T10:30",
+              "author": "Tu"
+            }
+          ],
+          "recurring": null,
+          "timeSpent": 120,
+          "createdAt": "2025-07-06T09:00"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Casa",
+      "color": "#10b981",
+      "tasks": [
+        {
+          "id": 3,
+          "title": "Spesa settimanale",
+          "details": "Latte, pane, verdure",
+          "completed": false,
+          "reminder": "2025-07-07T18:00",
+          "priority": "medium",
+          "comments": [],
+          "recurring": {
+            "type": "weekly",
+            "nextDue": "2025-07-14T18:00"
+          },
+          "timeSpent": 45,
+          "createdAt": "2025-07-07T08:00"
+        },
+        {
+          "id": 4,
+          "title": "Pulire bagno",
+          "details": "",
+          "completed": false,
+          "reminder": "",
+          "priority": "low",
+          "comments": [],
+          "recurring": null,
+          "timeSpent": 60,
+          "createdAt": "2025-07-06T14:00"
+        },
+        {
+          "id": 1751884885441,
+          "title": "Ciaone",
+          "details": "",
+          "completed": false,
+          "reminder": "",
+          "priority": "medium",
+          "comments": [],
+          "recurring": null,
+          "timeSpent": 0,
+          "createdAt": "2025-07-07T10:41:25.441Z"
+        },
+        {
+          "id": 1751884886688,
+          "title": "Ciaone",
+          "details": "",
+          "completed": false,
+          "reminder": "",
+          "priority": "medium",
+          "comments": [],
+          "recurring": null,
+          "timeSpent": 0,
+          "createdAt": "2025-07-07T10:41:26.688Z"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Promemoria",
+      "color": "#f59e0b",
+      "tasks": [
+        {
+          "id": 5,
+          "title": "Compleanno Marco",
+          "details": "Comprare regalo",
+          "completed": true,
+          "reminder": "2025-07-08T10:00",
+          "priority": "high",
+          "comments": [
+            {
+              "id": 1,
+              "text": "Gli piacciono i libri di fantascienza",
+              "time": "2025-07-06T15:00",
+              "author": "Tu"
+            }
+          ],
+          "recurring": null,
+          "timeSpent": 0,
+          "createdAt": "2025-07-05T12:00"
+        }
+      ]
+    }
+  ],
+  "weather": {
+    "temp": 24,
+    "condition": "Soleggiato",
+    "humidity": 65,
+    "wind": 12
+  },
+  "news": [
+    {
+      "id": 1,
+      "title": "Mercati in crescita oggi",
+      "time": "2h fa"
+    },
+    {
+      "id": 2,
+      "title": "Nuove tecnologie AI",
+      "time": "4h fa"
+    },
+    {
+      "id": 3,
+      "title": "Eventi meteo della settimana",
+      "time": "6h fa"
+    }
+  ],
+  "calendarEvents": [
+    {
+      "id": 1,
+      "title": "Meeting Team",
+      "time": "14:00",
+      "date": "2025-07-07"
+    },
+    {
+      "id": 2,
+      "title": "Dentista",
+      "time": "16:30",
+      "date": "2025-07-07"
+    },
+    {
+      "id": 3,
+      "title": "Cena con amici",
+      "time": "20:00",
+      "date": "2025-07-08"
+    }
+  ],
+  "stats": {
+    "today": 9,
+    "week": 18,
+    "month": 72,
+    "streak": 5,
+    "totalCompleted": 153,
+    "productivity": 85,
+    "timeSpentToday": 245,
+    "avgTaskTime": 38
+  }
+}
