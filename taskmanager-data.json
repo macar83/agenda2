@@ -2,41 +2,8 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "ding",
-  "currentView": "list",
-  "selectedList": {
-    "id": 2,
-    "name": "Casa",
-    "color": "#10b981",
-    "tasks": [
-      {
-        "id": 3,
-        "title": "Spesa settimanale",
-        "details": "Latte, pane, verdure",
-        "completed": false,
-        "reminder": "2025-07-07T18:00",
-        "priority": "medium",
-        "comments": [],
-        "recurring": {
-          "type": "weekly",
-          "nextDue": "2025-07-14T18:00"
-        },
-        "timeSpent": 45,
-        "createdAt": "2025-07-07T08:00"
-      },
-      {
-        "id": 4,
-        "title": "Pulire bagno",
-        "details": "",
-        "completed": true,
-        "reminder": "",
-        "priority": "low",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 60,
-        "createdAt": "2025-07-06T14:00"
-      }
-    ]
-  },
+  "currentView": "overview",
+  "selectedList": null,
   "lists": [
     {
       "id": 1,
@@ -193,6 +160,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T16:24:01.265Z",
+  "lastSync": "2025-07-07T16:24:29.917Z",
   "syncedFrom": "web"
 }
