@@ -31,7 +31,7 @@
         "id": 2,
         "title": "Rispondere alle email",
         "details": "Check inbox e risposte urgenti",
-        "completed": false,
+        "completed": true,
         "reminder": "",
         "priority": "medium",
         "comments": [],
@@ -85,7 +85,7 @@
           "id": 2,
           "title": "Rispondere alle email",
           "details": "Check inbox e risposte urgenti",
-          "completed": false,
+          "completed": true,
           "reminder": "",
           "priority": "medium",
           "comments": [],
@@ -215,15 +215,15 @@
     }
   ],
   "stats": {
-    "today": 4,
+    "today": 5,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 148,
+    "totalCompleted": 149,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T16:33:12.411Z",
+  "lastSync": "2025-07-07T16:33:19.252Z",
   "syncedFrom": "web"
 }
