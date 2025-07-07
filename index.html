@@ -787,73 +787,119 @@
                 this.newsData = [];
                 this.lastNewsUpdate = null;
                 this.updateInterval = 30 * 60 * 1000; // 30 minuti
-                this.techFeeds = [
-                    'https://feeds.feedburner.com/TechCrunch',
-                    'https://www.theverge.com/rss/index.xml',
-                    'https://feeds.arstechnica.com/arstechnica/index',
-                    'https://rss.cnn.com/rss/edition.rss'
-                ];
+                this.isUpdating = false;
             }
 
             async updateNews() {
                 const now = Date.now();
                 
-                // Evita aggiornamenti troppo frequenti
+                // Evita aggiornamenti sovrapposti
+                if (this.isUpdating) {
+                    console.log('📰 Aggiornamento già in corso...');
+                    return this.newsData;
+                }
+
+                // Evita aggiornamenti troppo frequenti (ma permette refresh manuale)
                 if (this.lastNewsUpdate && (now - this.lastNewsUpdate) < this.updateInterval) {
+                    console.log('📰 Notizie ancora fresche, skip aggiornamento');
                     return this.newsData;
                 }
 
                 try {
-                    console.log('📰 Aggiornamento notizie...');
+                    this.isUpdating = true;
+                    console.log('📰 Aggiornamento notizie The Verge...');
                     
-                    // Usa RSS2JSON (GRATUITO, senza API key)
-                    const feedUrl = 'https://feeds.feedburner.com/TechCrunch'; // TechCrunch feed
+                    // Usa The Verge RSS feed tramite RSS2JSON
+                    const feedUrl = 'https://www.theverge.com/rss/index.xml';
                     const response = await fetch(
-                        `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&count=6`
+                        `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&count=8&api_key=` // API key opzionale per più richieste
                     );
 
                     if (response.ok) {
                         const data = await response.json();
                         
-                        if (data.status === 'ok' && data.items) {
-                            this.newsData = data.items.map((item, index) => ({
-                                id: index + 1,
-                                title: this.cleanTitle(item.title),
-                                time: this.formatTime(item.pubDate),
-                                url: item.link,
-                                source: 'TechCrunch'
-                            }));
+                        if (data.status === 'ok' && data.items && data.items.length > 0) {
+                            this.newsData = data.items
+                                .filter(item => item.title && item.title.trim()) // Filtra titoli vuoti
+                                .slice(0, 6) // Prendi i primi 6
+                                .map((item, index) => ({
+                                    id: Date.now() + index, // ID univoco
+                                    title: this.cleanTitle(item.title),
+                                    time: this.formatTime(item.pubDate),
+                                    url: item.link || '#',
+                                    source: 'The Verge',
+                                    description: this.cleanDescription(item.description || '')
+                                }));
 
                             this.lastNewsUpdate = now;
-                            console.log('✅ Notizie aggiornate:', this.newsData.length + ' articoli');
+                            console.log('✅ Notizie The Verge aggiornate:', this.newsData.length + ' articoli');
                             
                             // Aggiorna i dati nell'app
                             app.data.state.news = this.newsData;
                             app.data.saveToLocal();
                             
                             return this.newsData;
+                        } else {
+                            console.warn('⚠️ Risposta API vuota o malformata');
+                            throw new Error('Dati non validi da RSS2JSON');
                         }
+                    } else {
+                        console.error('❌ Errore HTTP:', response.status, response.statusText);
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                    
-                    throw new Error('Errore API notizie');
                 } catch (error) {
                     console.error('❌ Errore aggiornamento notizie:', error);
                     
-                    // Fallback alle notizie salvate o predefinite
+                    // Fallback: se non abbiamo notizie, usa dati di default
                     if (this.newsData.length === 0) {
                         this.newsData = [
-                            { id: 1, title: 'Notizie non disponibili', time: 'Errore connessione', source: 'Sistema' }
+                            { 
+                                id: 1, 
+                                title: 'Notizie The Verge non disponibili', 
+                                time: 'Errore connessione', 
+                                source: 'Sistema',
+                                url: 'https://www.theverge.com',
+                                description: 'Problema di connessione con il feed RSS'
+                            },
+                            { 
+                                id: 2, 
+                                title: 'Verifica la connessione internet', 
+                                time: 'Debug', 
+                                source: 'Sistema',
+                                url: '#',
+                                description: 'Riprova tra qualche minuto'
+                            }
                         ];
+                        
+                        // Aggiorna comunque i dati nell'app
+                        app.data.state.news = this.newsData;
+                        app.data.saveToLocal();
                     }
                     
                     return this.newsData;
+                } finally {
+                    this.isUpdating = false;
                 }
             }
 
             cleanTitle(title) {
-                // Rimuove HTML e accorcia se troppo lungo
-                const clean = title.replace(/<[^>]*>/g, '').trim();
-                return clean.length > 60 ? clean.substring(0, 57) + '...' : clean;
+                // Rimuove HTML, entità HTML e accorcia se troppo lungo
+                const clean = title
+                    .replace(/<[^>]*>/g, '') // Rimuove tag HTML
+                    .replace(/&[^;]+;/g, ' ') // Rimuove entità HTML
+                    .replace(/\s+/g, ' ') // Normalizza spazi
+                    .trim();
+                    
+                return clean.length > 65 ? clean.substring(0, 62) + '...' : clean;
+            }
+
+            cleanDescription(description) {
+                // Pulisce la descrizione per tooltip o dettagli
+                return description
+                    .replace(/<[^>]*>/g, '')
+                    .replace(/&[^;]+;/g, ' ')
+                    .substring(0, 150)
+                    .trim();
             }
 
             formatTime(pubDate) {
@@ -861,52 +907,70 @@
                     const date = new Date(pubDate);
                     const now = new Date();
                     const diffMs = now - date;
-                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                    const diffMin = Math.floor(diffMs / (1000 * 60));
+                    const diffHours = Math.floor(diffMin / 60);
                     const diffDays = Math.floor(diffHours / 24);
                     
                     if (diffDays > 0) {
-                        return `${diffDays}g fa`;
+                        return diffDays === 1 ? '1 giorno fa' : `${diffDays} giorni fa`;
                     } else if (diffHours > 0) {
-                        return `${diffHours}h fa`;
+                        return diffHours === 1 ? '1 ora fa' : `${diffHours} ore fa`;
+                    } else if (diffMin > 0) {
+                        return diffMin === 1 ? '1 minuto fa' : `${diffMin} minuti fa`;
                     } else {
-                        const diffMin = Math.floor(diffMs / (1000 * 60));
-                        return `${Math.max(1, diffMin)}m fa`;
+                        return 'Appena pubblicato';
                     }
-                } catch {
-                    return 'Tempo sconosciuto';
+                } catch (error) {
+                    console.warn('Errore parsing data:', pubDate);
+                    return 'Data sconosciuta';
                 }
+            }
+
+            async forceUpdate() {
+                // Forza l'aggiornamento ignorando il timeout
+                console.log('🔄 Aggiornamento forzato notizie...');
+                this.lastNewsUpdate = null; // Reset timeout
+                const result = await this.updateNews();
+                
+                // Aggiorna la UI immediatamente
+                if (app.data.state.currentView === 'overview') {
+                    app.ui.render();
+                }
+                
+                return result;
             }
 
             startAutoUpdate() {
                 // Aggiorna subito
-                this.updateNews();
+                this.updateNews().then(() => {
+                    console.log('📰 Prima sincronizzazione notizie completata');
+                    if (app.data.state.currentView === 'overview') {
+                        app.ui.render();
+                    }
+                });
                 
                 // Poi ogni 30 minuti
                 setInterval(() => {
                     this.updateNews().then(() => {
                         // Aggiorna la UI se siamo nella overview
                         if (app.data.state.currentView === 'overview') {
+                            console.log('📰 Auto-refresh UI after news update');
                             app.ui.render();
                         }
                     });
                 }, this.updateInterval);
                 
-                console.log('📰 Auto-aggiornamento notizie avviato');
+                console.log('📰 Auto-aggiornamento notizie The Verge avviato (ogni 30 min)');
             }
 
-            async updateWithAlternativeAPI() {
-                // Fallback con NewsAPI (richiede registrazione gratuita)
-                // Uncomment e aggiungi la tua API key se necessario
-                /*
-                try {
-                    const response = await fetch(
-                        `https://newsapi.org/v2/top-headlines?category=technology&country=it&pageSize=5&apiKey=YOUR_API_KEY`
-                    );
-                    // ... gestione risposta
-                } catch (error) {
-                    console.error('Errore NewsAPI:', error);
-                }
-                */
+            getStatus() {
+                return {
+                    isUpdating: this.isUpdating,
+                    lastUpdate: this.lastNewsUpdate ? new Date(this.lastNewsUpdate).toLocaleTimeString('it-IT') : 'Mai',
+                    nextUpdate: this.lastNewsUpdate ? 
+                        new Date(this.lastNewsUpdate + this.updateInterval).toLocaleTimeString('it-IT') : 'Sconosciuto',
+                    articlesCount: this.newsData.length
+                };
             }
         }
         class DataManager {
@@ -1706,22 +1770,34 @@
 
                             <div class="space-y-3">
                                 <div class="card">
-                                    <h3 class="font-medium mb-3 text-sm">Notizie Tech</h3>
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span>🔥</span>
+                                        <span class="font-medium text-sm">The Verge</span>
+                                        <div class="flex items-center gap-1" style="margin-left: auto;">
+                                            ${app.news.isUpdating ? `
+                                                <span class="text-xs" style="color: #8b5cf6;">🔄 Aggiornando...</span>
+                                            ` : `
+                                                <button class="text-xs" style="color: #6b7280; background: none; border: none; cursor: pointer;" onclick="app.news.forceUpdate()" title="Aggiorna notizie ora">
+                                                    🔄
+                                                </button>
+                                            `}
+                                        </div>
+                                    </div>
                                     <div class="space-y-2">
-                                        ${app.data.state.news.slice(0, 4).map(item => `
+                                        ${app.data.state.news.slice(0, 5).map(item => `
                                             <div class="text-xs">
-                                                <div class="font-medium truncate" style="cursor: pointer;" onclick="if('${item.url}' && '${item.url}' !== 'undefined') window.open('${item.url}', '_blank')" title="Clicca per leggere l'articolo completo">${item.title}</div>
-                                                <div style="color: #6b7280;" class="flex items-center justify-between">
+                                                <div class="font-medium truncate" style="cursor: pointer; line-height: 1.3;" onclick="if('${item.url}' && '${item.url}' !== '#' && '${item.url}' !== 'undefined') window.open('${item.url}', '_blank')" title="${item.description || 'Clicca per leggere l\'articolo completo'}">${item.title}</div>
+                                                <div style="color: #6b7280;" class="flex items-center justify-between" style="margin-top: 2px;">
                                                     <span>${item.time}</span>
-                                                    ${item.source ? `<span class="text-xs" style="color: #8b5cf6;">${item.source}</span>` : ''}
+                                                    <span class="text-xs" style="color: #10b981; font-weight: 500;">Verge</span>
                                                 </div>
                                             </div>
                                         `).join('')}
                                     </div>
-                                    <div class="text-center" style="margin-top: 8px;">
-                                        <button class="text-xs" style="color: #6b7280; background: none; border: none; cursor: pointer;" onclick="app.news.updateNews().then(() => app.ui.render())" title="Aggiorna notizie">
-                                            🔄 Aggiorna
-                                        </button>
+                                    <div class="text-center" style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                                        <a href="https://www.theverge.com" target="_blank" class="text-xs" style="color: #6b7280; text-decoration: none;" title="Vai a The Verge">
+                                            🌐 Visita The Verge
+                                        </a>
                                     </div>
                                 </div>
 
