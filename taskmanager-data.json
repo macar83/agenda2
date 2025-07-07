@@ -11,7 +11,7 @@
       {
         "id": 1,
         "title": "Preparare presentazione",
-        "details": "Slide per il meeting di venerdÃ¬",
+        "details": "Slide per il meeting di venerdì",
         "completed": false,
         "reminder": "2025-07-07T14:00",
         "priority": "high",
@@ -41,18 +41,6 @@
         },
         "timeSpent": 30,
         "createdAt": "2025-07-07T08:00"
-      },
-      {
-        "id": 1751905570942,
-        "title": "pippo 3",
-        "details": "",
-        "completed": false,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T16:26:10.942Z"
       }
     ]
   },
@@ -65,7 +53,7 @@
         {
           "id": 1,
           "title": "Preparare presentazione",
-          "details": "Slide per il meeting di venerdÃ¬",
+          "details": "Slide per il meeting di venerdì",
           "completed": false,
           "reminder": "2025-07-07T14:00",
           "priority": "high",
@@ -95,18 +83,6 @@
           },
           "timeSpent": 30,
           "createdAt": "2025-07-07T08:00"
-        },
-        {
-          "id": 1751905570942,
-          "title": "pippo 3",
-          "details": "",
-          "completed": false,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T16:26:10.942Z"
         }
       ]
     },
@@ -224,6 +200,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T16:26:27.876Z",
+  "lastSync": "2025-07-07T16:29:04.428Z",
   "syncedFrom": "web"
 }
