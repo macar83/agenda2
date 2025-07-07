@@ -4,43 +4,36 @@
   "selectedSound": "ding",
   "currentView": "list",
   "selectedList": {
-    "id": 1,
-    "name": "Lavoro",
-    "color": "#3b82f6",
+    "id": 2,
+    "name": "Casa",
+    "color": "#10b981",
     "tasks": [
       {
-        "id": 1,
-        "title": "Preparare presentazione",
-        "details": "Slide per il meeting di venerdì",
+        "id": 3,
+        "title": "Spesa settimanale",
+        "details": "Latte, pane, verdure",
         "completed": false,
-        "reminder": "2025-07-07T14:00",
-        "priority": "high",
-        "comments": [
-          {
-            "id": 1,
-            "text": "Ricorda di includere i grafici Q2",
-            "time": "2025-07-06T10:30",
-            "author": "Tu"
-          }
-        ],
-        "recurring": null,
-        "timeSpent": 120,
-        "createdAt": "2025-07-06T09:00"
-      },
-      {
-        "id": 2,
-        "title": "Rispondere alle email",
-        "details": "Check inbox e risposte urgenti",
-        "completed": false,
-        "reminder": "",
+        "reminder": "2025-07-07T18:00",
         "priority": "medium",
         "comments": [],
         "recurring": {
-          "type": "daily",
-          "nextDue": "2025-07-08T09:00"
+          "type": "weekly",
+          "nextDue": "2025-07-14T18:00"
         },
-        "timeSpent": 30,
+        "timeSpent": 45,
         "createdAt": "2025-07-07T08:00"
+      },
+      {
+        "id": 4,
+        "title": "Pulire bagno",
+        "details": "",
+        "completed": true,
+        "reminder": "",
+        "priority": "low",
+        "comments": [],
+        "recurring": null,
+        "timeSpent": 60,
+        "createdAt": "2025-07-06T14:00"
       }
     ]
   },
@@ -53,7 +46,7 @@
         {
           "id": 1,
           "title": "Preparare presentazione",
-          "details": "Slide per il meeting di venerdì",
+          "details": "Slide per il meeting di venerdÃ¬",
           "completed": false,
           "reminder": "2025-07-07T14:00",
           "priority": "high",
@@ -200,6 +193,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T15:56:38.603Z",
+  "lastSync": "2025-07-07T16:01:28.263Z",
   "syncedFrom": "web"
 }
