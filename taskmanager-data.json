@@ -4,67 +4,28 @@
   "selectedSound": "ding",
   "currentView": "list",
   "selectedList": {
-    "id": 1,
-    "name": "Lavoro",
-    "color": "#3b82f6",
+    "id": 3,
+    "name": "Promemoria",
+    "color": "#f59e0b",
     "tasks": [
       {
-        "id": 1,
-        "title": "Preparare presentazione",
-        "details": "Slide per il meeting di venerdì",
-        "completed": true,
-        "reminder": "2025-07-07T14:00",
+        "id": 5,
+        "title": "Compleanno Marco",
+        "details": "Comprare regalo",
+        "completed": false,
+        "reminder": "2025-07-08T10:00",
         "priority": "high",
         "comments": [
           {
             "id": 1,
-            "text": "Ricorda di includere i grafici Q2",
-            "time": "2025-07-06T10:30",
+            "text": "Gli piacciono i libri di fantascienza",
+            "time": "2025-07-06T15:00",
             "author": "Tu"
           }
         ],
         "recurring": null,
-        "timeSpent": 120,
-        "createdAt": "2025-07-06T09:00"
-      },
-      {
-        "id": 2,
-        "title": "Rispondere alle email",
-        "details": "Check inbox e risposte urgenti",
-        "completed": true,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": {
-          "type": "daily",
-          "nextDue": "2025-07-08T09:00"
-        },
-        "timeSpent": 30,
-        "createdAt": "2025-07-07T08:00"
-      },
-      {
-        "id": 1751905801011,
-        "title": "pippo 5",
-        "details": "",
-        "completed": true,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
         "timeSpent": 0,
-        "createdAt": "2025-07-07T16:30:01.011Z"
-      },
-      {
-        "id": 1751927126541,
-        "title": "task 0025",
-        "details": "",
-        "completed": false,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T22:25:26.541Z"
+        "createdAt": "2025-07-05T12:00"
       }
     ]
   },
@@ -77,8 +38,8 @@
         {
           "id": 1,
           "title": "Preparare presentazione",
-          "details": "Slide per il meeting di venerdì",
-          "completed": true,
+          "details": "Slide per il meeting di venerd�",
+          "completed": false,
           "reminder": "2025-07-07T14:00",
           "priority": "high",
           "comments": [
@@ -97,7 +58,7 @@
           "id": 2,
           "title": "Rispondere alle email",
           "details": "Check inbox e risposte urgenti",
-          "completed": true,
+          "completed": false,
           "reminder": "",
           "priority": "medium",
           "comments": [],
@@ -107,30 +68,6 @@
           },
           "timeSpent": 30,
           "createdAt": "2025-07-07T08:00"
-        },
-        {
-          "id": 1751905801011,
-          "title": "pippo 5",
-          "details": "",
-          "completed": true,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T16:30:01.011Z"
-        },
-        {
-          "id": 1751927126541,
-          "title": "task 0025",
-          "details": "",
-          "completed": false,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T22:25:26.541Z"
         }
       ]
     },
@@ -239,15 +176,15 @@
     }
   ],
   "stats": {
-    "today": 6,
+    "today": 3,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 150,
+    "totalCompleted": 147,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T22:25:28.564Z",
+  "lastSync": "2025-07-07T22:27:25.571Z",
   "syncedFrom": "web"
 }
