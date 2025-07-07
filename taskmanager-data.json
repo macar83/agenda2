@@ -46,7 +46,7 @@
         "id": 1751905801011,
         "title": "pippo 5",
         "details": "",
-        "completed": false,
+        "completed": true,
         "reminder": "",
         "priority": "medium",
         "comments": [],
@@ -100,7 +100,7 @@
           "id": 1751905801011,
           "title": "pippo 5",
           "details": "",
-          "completed": false,
+          "completed": true,
           "reminder": "",
           "priority": "medium",
           "comments": [],
@@ -215,15 +215,15 @@
     }
   ],
   "stats": {
-    "today": 3,
+    "today": 4,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 147,
+    "totalCompleted": 148,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T16:30:01.024Z",
+  "lastSync": "2025-07-07T16:33:12.411Z",
   "syncedFrom": "web"
 }
