@@ -1,42 +1,9 @@
 {
   "theme": "light",
   "soundEnabled": true,
-  "selectedSound": "bell",
-  "currentView": "list",
-  "selectedList": {
-    "id": 2,
-    "name": "Casa",
-    "color": "#10b981",
-    "tasks": [
-      {
-        "id": 3,
-        "title": "Spesa settimanale",
-        "details": "Latte, pane, verdure",
-        "completed": false,
-        "reminder": "2025-07-07T18:00",
-        "priority": "medium",
-        "comments": [],
-        "recurring": {
-          "type": "weekly",
-          "nextDue": "2025-07-14T18:00"
-        },
-        "timeSpent": 45,
-        "createdAt": "2025-07-07T08:00"
-      },
-      {
-        "id": 4,
-        "title": "Pulire bagno",
-        "details": "",
-        "completed": false,
-        "reminder": "",
-        "priority": "low",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 60,
-        "createdAt": "2025-07-06T14:00"
-      }
-    ]
-  },
+  "selectedSound": "ding",
+  "currentView": "overview",
+  "selectedList": null,
   "lists": [
     {
       "id": 1,
@@ -63,16 +30,19 @@
           "createdAt": "2025-07-06T09:00"
         },
         {
-          "id": 1751899280746,
-          "title": "Prova",
-          "details": "ciao",
+          "id": 2,
+          "title": "Rispondere alle email",
+          "details": "Check inbox e risposte urgenti",
           "completed": false,
           "reminder": "",
           "priority": "medium",
           "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T14:41:20.746Z"
+          "recurring": {
+            "type": "daily",
+            "nextDue": "2025-07-08T09:00"
+          },
+          "timeSpent": 30,
+          "createdAt": "2025-07-07T08:00"
         }
       ]
     },
@@ -100,7 +70,7 @@
           "id": 4,
           "title": "Pulire bagno",
           "details": "",
-          "completed": false,
+          "completed": true,
           "reminder": "",
           "priority": "low",
           "comments": [],
@@ -119,7 +89,7 @@
           "id": 5,
           "title": "Compleanno Marco",
           "details": "Comprare regalo",
-          "completed": true,
+          "completed": false,
           "reminder": "2025-07-08T10:00",
           "priority": "high",
           "comments": [
@@ -181,15 +151,15 @@
     }
   ],
   "stats": {
-    "today": 10,
+    "today": 3,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 154,
+    "totalCompleted": 147,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T15:21:21.731Z",
+  "lastSync": "2025-07-07T15:25:05.424Z",
   "syncedFrom": "web"
 }
