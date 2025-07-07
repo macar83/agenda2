@@ -2,8 +2,33 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "bell",
-  "currentView": "overview",
-  "selectedList": null,
+  "currentView": "list",
+  "selectedList": {
+    "id": 1,
+    "name": "Lavoro",
+    "color": "#3b82f6",
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Preparare presentazione",
+        "details": "Slide per il meeting di venerdì",
+        "completed": false,
+        "reminder": "2025-07-07T14:00",
+        "priority": "high",
+        "comments": [
+          {
+            "id": 1,
+            "text": "Ricorda di includere i grafici Q2",
+            "time": "2025-07-06T10:30",
+            "author": "Tu"
+          }
+        ],
+        "recurring": null,
+        "timeSpent": 120,
+        "createdAt": "2025-07-06T09:00"
+      }
+    ]
+  },
   "lists": [
     {
       "id": 1,
@@ -14,7 +39,7 @@
           "id": 1,
           "title": "Preparare presentazione",
           "details": "Slide per il meeting di venerdì",
-          "completed": true,
+          "completed": false,
           "reminder": "2025-07-07T14:00",
           "priority": "high",
           "comments": [
@@ -168,5 +193,7 @@
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
-  }
+  },
+  "lastSync": "2025-07-07T14:38:03.603Z",
+  "syncedFrom": "web"
 }
