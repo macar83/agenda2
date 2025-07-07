@@ -27,25 +27,13 @@
         "id": 4,
         "title": "Pulire bagno",
         "details": "",
-        "completed": false,
+        "completed": true,
         "reminder": "",
         "priority": "low",
         "comments": [],
         "recurring": null,
         "timeSpent": 60,
         "createdAt": "2025-07-06T14:00"
-      },
-      {
-        "id": 1751902040302,
-        "title": "Test 17.27",
-        "details": "",
-        "completed": false,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T15:27:20.302Z"
       }
     ]
   },
@@ -115,25 +103,13 @@
           "id": 4,
           "title": "Pulire bagno",
           "details": "",
-          "completed": false,
+          "completed": true,
           "reminder": "",
           "priority": "low",
           "comments": [],
           "recurring": null,
           "timeSpent": 60,
           "createdAt": "2025-07-06T14:00"
-        },
-        {
-          "id": 1751902040302,
-          "title": "Test 17.27",
-          "details": "",
-          "completed": false,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T15:27:20.302Z"
         }
       ]
     },
@@ -217,6 +193,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T15:27:20.551Z",
+  "lastSync": "2025-07-07T15:28:02.317Z",
   "syncedFrom": "web"
 }
