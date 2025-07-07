@@ -2,8 +2,45 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "ding",
-  "currentView": "overview",
-  "selectedList": null,
+  "currentView": "list",
+  "selectedList": {
+    "id": 3,
+    "name": "Promemoria",
+    "color": "#f59e0b",
+    "tasks": [
+      {
+        "id": 5,
+        "title": "Compleanno Marco",
+        "details": "Comprare regalo",
+        "completed": false,
+        "reminder": "2025-07-08T10:00",
+        "priority": "high",
+        "comments": [
+          {
+            "id": 1,
+            "text": "Gli piacciono i libri di fantascienza",
+            "time": "2025-07-06T15:00",
+            "author": "Tu"
+          }
+        ],
+        "recurring": null,
+        "timeSpent": 0,
+        "createdAt": "2025-07-05T12:00"
+      },
+      {
+        "id": 1751928379743,
+        "title": "non capisco",
+        "details": "",
+        "completed": false,
+        "reminder": "",
+        "priority": "medium",
+        "comments": [],
+        "recurring": null,
+        "timeSpent": 0,
+        "createdAt": "2025-07-07T22:46:19.743Z"
+      }
+    ]
+  },
   "lists": [
     {
       "id": 1,
@@ -115,6 +152,18 @@
           "recurring": null,
           "timeSpent": 0,
           "createdAt": "2025-07-05T12:00"
+        },
+        {
+          "id": 1751928379743,
+          "title": "non capisco",
+          "details": "",
+          "completed": false,
+          "reminder": "",
+          "priority": "medium",
+          "comments": [],
+          "recurring": null,
+          "timeSpent": 0,
+          "createdAt": "2025-07-07T22:46:19.743Z"
         }
       ]
     }
@@ -172,6 +221,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T22:46:04.929Z",
+  "lastSync": "2025-07-07T22:46:21.979Z",
   "syncedFrom": "web"
 }
