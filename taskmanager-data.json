@@ -4,40 +4,36 @@
   "selectedSound": "bell",
   "currentView": "list",
   "selectedList": {
-    "id": 1,
-    "name": "Lavoro",
-    "color": "#3b82f6",
+    "id": 2,
+    "name": "Casa",
+    "color": "#10b981",
     "tasks": [
       {
-        "id": 1,
-        "title": "Preparare presentazione",
-        "details": "Slide per il meeting di venerdì",
+        "id": 3,
+        "title": "Spesa settimanale",
+        "details": "Latte, pane, verdure",
         "completed": false,
-        "reminder": "2025-07-07T14:00",
-        "priority": "high",
-        "comments": [
-          {
-            "id": 1,
-            "text": "Ricorda di includere i grafici Q2",
-            "time": "2025-07-06T10:30",
-            "author": "Tu"
-          }
-        ],
-        "recurring": null,
-        "timeSpent": 120,
-        "createdAt": "2025-07-06T09:00"
-      },
-      {
-        "id": 1751899280746,
-        "title": "Prova",
-        "details": "ciao",
-        "completed": false,
-        "reminder": "",
+        "reminder": "2025-07-07T18:00",
         "priority": "medium",
         "comments": [],
+        "recurring": {
+          "type": "weekly",
+          "nextDue": "2025-07-14T18:00"
+        },
+        "timeSpent": 45,
+        "createdAt": "2025-07-07T08:00"
+      },
+      {
+        "id": 4,
+        "title": "Pulire bagno",
+        "details": "",
+        "completed": false,
+        "reminder": "",
+        "priority": "low",
+        "comments": [],
         "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T14:41:20.746Z"
+        "timeSpent": 60,
+        "createdAt": "2025-07-06T14:00"
       }
     ]
   },
@@ -89,7 +85,7 @@
           "id": 3,
           "title": "Spesa settimanale",
           "details": "Latte, pane, verdure",
-          "completed": true,
+          "completed": false,
           "reminder": "2025-07-07T18:00",
           "priority": "medium",
           "comments": [],
@@ -194,6 +190,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T15:16:21.230Z",
+  "lastSync": "2025-07-07T15:21:21.731Z",
   "syncedFrom": "web"
 }
