@@ -2,53 +2,8 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "ding",
-  "currentView": "list",
-  "selectedList": {
-    "id": 2,
-    "name": "Casa",
-    "color": "#10b981",
-    "tasks": [
-      {
-        "id": 3,
-        "title": "Spesa settimanale",
-        "details": "Latte, pane, verdure",
-        "completed": false,
-        "reminder": "2025-07-07T18:00",
-        "priority": "medium",
-        "comments": [],
-        "recurring": {
-          "type": "weekly",
-          "nextDue": "2025-07-14T18:00"
-        },
-        "timeSpent": 45,
-        "createdAt": "2025-07-07T08:00"
-      },
-      {
-        "id": 4,
-        "title": "Pulire bagno",
-        "details": "",
-        "completed": true,
-        "reminder": "",
-        "priority": "low",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 60,
-        "createdAt": "2025-07-06T14:00"
-      },
-      {
-        "id": 1751902040302,
-        "title": "Test 17.27",
-        "details": "",
-        "completed": true,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T15:27:20.302Z"
-      }
-    ]
-  },
+  "currentView": "overview",
+  "selectedList": null,
   "lists": [
     {
       "id": 1,
@@ -58,7 +13,7 @@
         {
           "id": 1,
           "title": "Preparare presentazione",
-          "details": "Slide per il meeting di venerdÃ¬",
+          "details": "Slide per il meeting di venerdì",
           "completed": false,
           "reminder": "2025-07-07T14:00",
           "priority": "high",
@@ -122,18 +77,6 @@
           "recurring": null,
           "timeSpent": 60,
           "createdAt": "2025-07-06T14:00"
-        },
-        {
-          "id": 1751902040302,
-          "title": "Test 17.27",
-          "details": "",
-          "completed": true,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T15:27:20.302Z"
         }
       ]
     },
@@ -208,15 +151,15 @@
     }
   ],
   "stats": {
-    "today": 5,
+    "today": 3,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 149,
+    "totalCompleted": 147,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T15:41:10.556Z",
+  "lastSync": "2025-07-07T15:42:42.368Z",
   "syncedFrom": "web"
 }
