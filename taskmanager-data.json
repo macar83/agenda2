@@ -2,60 +2,8 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "ding",
-  "currentView": "list",
-  "selectedList": {
-    "id": 1,
-    "name": "Lavoro",
-    "color": "#3b82f6",
-    "tasks": [
-      {
-        "id": 1,
-        "title": "Preparare presentazione",
-        "details": "Slide per il meeting di venerdì",
-        "completed": false,
-        "reminder": "2025-07-07T14:00",
-        "priority": "high",
-        "comments": [
-          {
-            "id": 1,
-            "text": "Ricorda di includere i grafici Q2",
-            "time": "2025-07-06T10:30",
-            "author": "Tu"
-          }
-        ],
-        "recurring": null,
-        "timeSpent": 120,
-        "createdAt": "2025-07-06T09:00"
-      },
-      {
-        "id": 2,
-        "title": "Rispondere alle email",
-        "details": "Check inbox e risposte urgenti",
-        "completed": false,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": {
-          "type": "daily",
-          "nextDue": "2025-07-08T09:00"
-        },
-        "timeSpent": 30,
-        "createdAt": "2025-07-07T08:00"
-      },
-      {
-        "id": 1751903105651,
-        "title": "ciccio pasticcio",
-        "details": "",
-        "completed": false,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T15:45:05.651Z"
-      }
-    ]
-  },
+  "currentView": "overview",
+  "selectedList": null,
   "lists": [
     {
       "id": 1,
@@ -95,18 +43,6 @@
           },
           "timeSpent": 30,
           "createdAt": "2025-07-07T08:00"
-        },
-        {
-          "id": 1751903105651,
-          "title": "ciccio pasticcio",
-          "details": "",
-          "completed": false,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T15:45:05.651Z"
         }
       ]
     },
@@ -236,6 +172,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T15:51:10.622Z",
+  "lastSync": "2025-07-07T15:51:17.807Z",
   "syncedFrom": "web"
 }
