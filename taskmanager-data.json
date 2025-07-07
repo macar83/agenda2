@@ -36,18 +36,6 @@
         "createdAt": "2025-07-06T14:00"
       },
       {
-        "id": 1751884885441,
-        "title": "Ciaone",
-        "details": "",
-        "completed": false,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T10:41:25.441Z"
-      },
-      {
         "id": 1751884886688,
         "title": "Ciaone",
         "details": "",
@@ -119,18 +107,6 @@
           "recurring": null,
           "timeSpent": 60,
           "createdAt": "2025-07-06T14:00"
-        },
-        {
-          "id": 1751884885441,
-          "title": "Ciaone",
-          "details": "",
-          "completed": false,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T10:41:25.441Z"
         },
         {
           "id": 1751884886688,
@@ -226,6 +202,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T14:38:07.880Z",
+  "lastSync": "2025-07-07T14:40:41.512Z",
   "syncedFrom": "web"
 }
