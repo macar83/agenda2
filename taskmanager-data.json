@@ -12,7 +12,7 @@
         "id": 5,
         "title": "Compleanno Marco",
         "details": "Comprare regalo",
-        "completed": false,
+        "completed": true,
         "reminder": "2025-07-08T10:00",
         "priority": "high",
         "comments": [
@@ -34,7 +34,7 @@
         "reminder": "",
         "priority": "medium",
         "recurring": null,
-        "completed": false,
+        "completed": true,
         "comments": [],
         "timeSpent": 0,
         "createdAt": "2025-07-07T22:59:05.043Z"
@@ -138,7 +138,7 @@
           "id": 5,
           "title": "Compleanno Marco",
           "details": "Comprare regalo",
-          "completed": false,
+          "completed": true,
           "reminder": "2025-07-08T10:00",
           "priority": "high",
           "comments": [
@@ -160,7 +160,7 @@
           "reminder": "",
           "priority": "medium",
           "recurring": null,
-          "completed": false,
+          "completed": true,
           "comments": [],
           "timeSpent": 0,
           "createdAt": "2025-07-07T22:59:05.043Z"
@@ -212,15 +212,15 @@
     }
   ],
   "stats": {
-    "today": 6,
+    "today": 8,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 150,
+    "totalCompleted": 152,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T23:12:45.398Z",
+  "lastSync": "2025-07-07T23:13:13.637Z",
   "syncedFrom": "web"
 }
