@@ -12,7 +12,7 @@
         "id": 1,
         "title": "Preparare presentazione",
         "details": "Slide per il meeting di venerdì",
-        "completed": false,
+        "completed": true,
         "reminder": "2025-07-07T14:00",
         "priority": "high",
         "comments": [
@@ -66,7 +66,7 @@
           "id": 1,
           "title": "Preparare presentazione",
           "details": "Slide per il meeting di venerdì",
-          "completed": false,
+          "completed": true,
           "reminder": "2025-07-07T14:00",
           "priority": "high",
           "comments": [
@@ -215,15 +215,15 @@
     }
   ],
   "stats": {
-    "today": 5,
+    "today": 6,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 149,
+    "totalCompleted": 150,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T16:33:19.252Z",
+  "lastSync": "2025-07-07T16:33:20.300Z",
   "syncedFrom": "web"
 }
