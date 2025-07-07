@@ -13,7 +13,7 @@
         {
           "id": 1,
           "title": "Preparare presentazione",
-          "details": "Slide per il meeting di venerdÃ¬",
+          "details": "Slide per il meeting di venerdì",
           "completed": false,
           "reminder": "2025-07-07T14:00",
           "priority": "high",
@@ -77,18 +77,6 @@
           "recurring": null,
           "timeSpent": 60,
           "createdAt": "2025-07-06T14:00"
-        },
-        {
-          "id": 1751902040302,
-          "title": "Test 17.27",
-          "details": "",
-          "completed": true,
-          "reminder": "",
-          "priority": "medium",
-          "comments": [],
-          "recurring": null,
-          "timeSpent": 0,
-          "createdAt": "2025-07-07T15:27:20.302Z"
         }
       ]
     },
@@ -163,15 +151,15 @@
     }
   ],
   "stats": {
-    "today": 5,
+    "today": 3,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 149,
+    "totalCompleted": 147,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T15:51:17.807Z",
+  "lastSync": "2025-07-07T15:52:45.912Z",
   "syncedFrom": "web"
 }
