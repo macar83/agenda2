@@ -12,7 +12,7 @@
         "id": 3,
         "title": "Spesa settimanale",
         "details": "Latte, pane, verdure",
-        "completed": false,
+        "completed": true,
         "reminder": "2025-07-07T18:00",
         "priority": "medium",
         "comments": [],
@@ -34,6 +34,18 @@
         "recurring": null,
         "timeSpent": 60,
         "createdAt": "2025-07-06T14:00"
+      },
+      {
+        "id": 1751902040302,
+        "title": "Test 17.27",
+        "details": "",
+        "completed": true,
+        "reminder": "",
+        "priority": "medium",
+        "comments": [],
+        "recurring": null,
+        "timeSpent": 0,
+        "createdAt": "2025-07-07T15:27:20.302Z"
       }
     ]
   },
@@ -46,7 +58,7 @@
         {
           "id": 1,
           "title": "Preparare presentazione",
-          "details": "Slide per il meeting di venerdÃ¬",
+          "details": "Slide per il meeting di venerdì",
           "completed": false,
           "reminder": "2025-07-07T14:00",
           "priority": "high",
@@ -88,7 +100,7 @@
           "id": 3,
           "title": "Spesa settimanale",
           "details": "Latte, pane, verdure",
-          "completed": false,
+          "completed": true,
           "reminder": "2025-07-07T18:00",
           "priority": "medium",
           "comments": [],
@@ -110,6 +122,18 @@
           "recurring": null,
           "timeSpent": 60,
           "createdAt": "2025-07-06T14:00"
+        },
+        {
+          "id": 1751902040302,
+          "title": "Test 17.27",
+          "details": "",
+          "completed": true,
+          "reminder": "",
+          "priority": "medium",
+          "comments": [],
+          "recurring": null,
+          "timeSpent": 0,
+          "createdAt": "2025-07-07T15:27:20.302Z"
         }
       ]
     },
@@ -184,15 +208,15 @@
     }
   ],
   "stats": {
-    "today": 3,
+    "today": 6,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 147,
+    "totalCompleted": 150,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-07T16:18:27.658Z",
+  "lastSync": "2025-07-07T16:19:22.368Z",
   "syncedFrom": "web"
 }
