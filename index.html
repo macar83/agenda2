@@ -749,63 +749,120 @@
                     this.isUpdating = true;
                     console.log('📰 Aggiornamento notizie The Verge...');
                     
-                    // Simula notizie per la demo
-                    this.newsData = [
-                        { 
-                            id: 1, 
-                            title: 'OpenAI rilascia GPT-5 con capacità rivoluzionarie', 
-                            time: '2 ore fa', 
-                            source: 'The Verge',
-                            url: 'https://www.theverge.com',
-                            description: 'Il nuovo modello promette performance straordinarie'
-                        },
-                        { 
-                            id: 2, 
-                            title: 'Apple presenta iPhone 16 con chip M3 integrato', 
-                            time: '4 ore fa', 
-                            source: 'The Verge',
-                            url: 'https://www.theverge.com',
-                            description: 'Prestazioni desktop su dispositivo mobile'
-                        },
-                        { 
-                            id: 3, 
-                            title: 'Meta annuncia VR glasses ultra-leggeri', 
-                            time: '6 ore fa', 
-                            source: 'The Verge',
-                            url: 'https://www.theverge.com',
-                            description: 'Solo 50 grammi per la realtà aumentata'
-                        },
-                        { 
-                            id: 4, 
-                            title: 'Tesla rilascia FSD Beta v12 completamente neurale', 
-                            time: '8 ore fa', 
-                            source: 'The Verge',
-                            url: 'https://www.theverge.com',
-                            description: 'Niente più codice hardcoded per la guida autonoma'
-                        },
-                        { 
-                            id: 5, 
-                            title: 'Google Bard integrato nativamente in Chrome', 
-                            time: '12 ore fa', 
-                            source: 'The Verge',
-                            url: 'https://www.theverge.com',
-                            description: 'AI assistant sempre disponibile nel browser'
-                        }
-                    ];
+                    // Usa The Verge RSS feed tramite RSS2JSON
+                    const feedUrl = 'https://www.theverge.com/rss/index.xml';
+                    const response = await fetch(
+                        `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&count=8&api_key=`
+                    );
 
-                    this.lastNewsUpdate = now;
-                    console.log('✅ Notizie The Verge aggiornate:', this.newsData.length + ' articoli');
-                    
-                    // Aggiorna i dati nell'app
-                    app.data.state.news = this.newsData;
-                    app.data.saveToLocal();
-                    
-                    return this.newsData;
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        if (data.status === 'ok' && data.items && data.items.length > 0) {
+                            this.newsData = data.items
+                                .filter(item => item.title && item.title.trim()) // Filtra titoli vuoti
+                                .slice(0, 6) // Prendi i primi 6
+                                .map((item, index) => ({
+                                    id: Date.now() + index, // ID univoco
+                                    title: this.cleanTitle(item.title),
+                                    time: this.formatTime(item.pubDate),
+                                    url: item.link || '#',
+                                    source: 'The Verge',
+                                    description: this.cleanDescription(item.description || '')
+                                }));
+
+                            this.lastNewsUpdate = now;
+                            console.log('✅ Notizie The Verge aggiornate:', this.newsData.length + ' articoli');
+                            
+                            // Aggiorna i dati nell'app
+                            app.data.state.news = this.newsData;
+                            app.data.saveToLocal();
+                            
+                            return this.newsData;
+                        } else {
+                            console.warn('⚠️ Risposta API vuota o malformata');
+                            throw new Error('Dati non validi da RSS2JSON');
+                        }
+                    } else {
+                        console.error('❌ Errore HTTP:', response.status, response.statusText);
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
                 } catch (error) {
                     console.error('❌ Errore aggiornamento notizie:', error);
+                    
+                    // Fallback: se non abbiamo notizie, usa dati di default
+                    if (this.newsData.length === 0) {
+                        this.newsData = [
+                            { 
+                                id: 1, 
+                                title: 'Feed RSS non disponibile', 
+                                time: 'Errore connessione', 
+                                source: 'Sistema',
+                                url: 'https://www.theverge.com',
+                                description: 'Problema di connessione con il feed RSS'
+                            },
+                            { 
+                                id: 2, 
+                                title: 'Verifica la connessione internet', 
+                                time: 'Debug', 
+                                source: 'Sistema',
+                                url: '#',
+                                description: 'Riprova tra qualche minuto'
+                            }
+                        ];
+                        
+                        // Aggiorna comunque i dati nell'app
+                        app.data.state.news = this.newsData;
+                        app.data.saveToLocal();
+                    }
+                    
                     return this.newsData;
                 } finally {
                     this.isUpdating = false;
+                }
+            }
+
+            cleanTitle(title) {
+                // Rimuove HTML, entità HTML e accorcia se troppo lungo
+                const clean = title
+                    .replace(/<[^>]*>/g, '') // Rimuove tag HTML
+                    .replace(/&[^;]+;/g, ' ') // Rimuove entità HTML
+                    .replace(/\s+/g, ' ') // Normalizza spazi
+                    .trim();
+                    
+                return clean.length > 65 ? clean.substring(0, 62) + '...' : clean;
+            }
+
+            cleanDescription(description) {
+                // Pulisce la descrizione per tooltip o dettagli
+                return description
+                    .replace(/<[^>]*>/g, '')
+                    .replace(/&[^;]+;/g, ' ')
+                    .substring(0, 150)
+                    .trim();
+            }
+
+            formatTime(pubDate) {
+                try {
+                    const date = new Date(pubDate);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMin = Math.floor(diffMs / (1000 * 60));
+                    const diffHours = Math.floor(diffMin / 60);
+                    const diffDays = Math.floor(diffHours / 24);
+                    
+                    if (diffDays > 0) {
+                        return diffDays === 1 ? '1 giorno fa' : `${diffDays} giorni fa`;
+                    } else if (diffHours > 0) {
+                        return diffHours === 1 ? '1 ora fa' : `${diffHours} ore fa`;
+                    } else if (diffMin > 0) {
+                        return diffMin === 1 ? '1 minuto fa' : `${diffMin} minuti fa`;
+                    } else {
+                        return 'Appena pubblicato';
+                    }
+                } catch (error) {
+                    console.warn('Errore parsing data:', pubDate);
+                    return 'Data sconosciuta';
                 }
             }
 
