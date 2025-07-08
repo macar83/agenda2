@@ -2,8 +2,72 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "ding",
-  "currentView": "overview",
-  "selectedList": null,
+  "currentView": "list",
+  "selectedList": {
+    "id": 1,
+    "name": "Lavoro",
+    "color": "#3b82f6",
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Preparare presentazione",
+        "details": "Slide per il meeting di venerdì",
+        "completed": true,
+        "reminder": "2025-07-07T14:00",
+        "priority": "high",
+        "comments": [
+          {
+            "id": 1,
+            "text": "Ricorda di includere i grafici Q2",
+            "time": "2025-07-06T10:30",
+            "author": "Tu"
+          }
+        ],
+        "recurring": null,
+        "timeSpent": 120,
+        "createdAt": "2025-07-06T09:00"
+      },
+      {
+        "id": 2,
+        "title": "Rispondere alle email",
+        "details": "Check inbox e risposte urgenti",
+        "completed": true,
+        "reminder": "",
+        "priority": "medium",
+        "comments": [],
+        "recurring": {
+          "type": "daily",
+          "nextDue": "2025-07-08T09:00"
+        },
+        "timeSpent": 30,
+        "createdAt": "2025-07-07T08:00"
+      },
+      {
+        "id": 1751905801011,
+        "title": "pippo 5",
+        "details": "",
+        "completed": true,
+        "reminder": "",
+        "priority": "medium",
+        "comments": [],
+        "recurring": null,
+        "timeSpent": 0,
+        "createdAt": "2025-07-07T16:30:01.011Z"
+      },
+      {
+        "id": 1751965844675,
+        "title": "ciano",
+        "details": "",
+        "reminder": "",
+        "priority": "medium",
+        "recurring": null,
+        "completed": true,
+        "comments": [],
+        "timeSpent": 0,
+        "createdAt": "2025-07-08T09:10:44.675Z"
+      }
+    ]
+  },
   "lists": [
     {
       "id": 1,
@@ -139,6 +203,18 @@
           "comments": [],
           "timeSpent": 0,
           "createdAt": "2025-07-08T09:10:38.055Z"
+        },
+        {
+          "id": 1751977672672,
+          "title": "Ciccio pasticcio",
+          "details": "",
+          "reminder": "",
+          "priority": "medium",
+          "recurring": null,
+          "completed": false,
+          "comments": [],
+          "timeSpent": 0,
+          "createdAt": "2025-07-08T12:27:52.672Z"
         }
       ]
     },
@@ -218,6 +294,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T13:20:34.378Z",
+  "lastSync": "2025-07-08T13:20:46.747Z",
   "syncedFrom": "web"
 }
