@@ -61,7 +61,7 @@
         "reminder": "",
         "priority": "medium",
         "recurring": null,
-        "completed": false,
+        "completed": true,
         "comments": [],
         "timeSpent": 0,
         "createdAt": "2025-07-08T09:10:44.675Z"
@@ -127,7 +127,7 @@
           "reminder": "",
           "priority": "medium",
           "recurring": null,
-          "completed": false,
+          "completed": true,
           "comments": [],
           "timeSpent": 0,
           "createdAt": "2025-07-08T09:10:44.675Z"
@@ -143,7 +143,7 @@
           "id": 3,
           "title": "Spesa settimanale",
           "details": "Latte, pane, verdure",
-          "completed": false,
+          "completed": true,
           "reminder": "2025-07-07T18:00",
           "priority": "medium",
           "comments": [],
@@ -177,7 +177,7 @@
           "id": 5,
           "title": "Compleanno Marco",
           "details": "Comprare regalo",
-          "completed": false,
+          "completed": true,
           "reminder": "2025-07-08T10:00",
           "priority": "high",
           "comments": [
@@ -199,7 +199,7 @@
           "reminder": "",
           "priority": "medium",
           "recurring": null,
-          "completed": false,
+          "completed": true,
           "comments": [],
           "timeSpent": 0,
           "createdAt": "2025-07-08T09:10:38.055Z"
@@ -254,15 +254,15 @@
     }
   ],
   "stats": {
-    "today": 6,
+    "today": 10,
     "week": 18,
     "month": 72,
     "streak": 5,
-    "totalCompleted": 150,
+    "totalCompleted": 154,
     "productivity": 85,
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T10:41:17.965Z",
+  "lastSync": "2025-07-08T10:41:26.811Z",
   "syncedFrom": "web"
 }
