@@ -53,6 +53,18 @@
         "recurring": null,
         "timeSpent": 0,
         "createdAt": "2025-07-07T16:30:01.011Z"
+      },
+      {
+        "id": 1751965844675,
+        "title": "ciano",
+        "details": "",
+        "reminder": "",
+        "priority": "medium",
+        "recurring": null,
+        "completed": false,
+        "comments": [],
+        "timeSpent": 0,
+        "createdAt": "2025-07-08T09:10:44.675Z"
       }
     ]
   },
@@ -107,6 +119,18 @@
           "recurring": null,
           "timeSpent": 0,
           "createdAt": "2025-07-07T16:30:01.011Z"
+        },
+        {
+          "id": 1751965844675,
+          "title": "ciano",
+          "details": "",
+          "reminder": "",
+          "priority": "medium",
+          "recurring": null,
+          "completed": false,
+          "comments": [],
+          "timeSpent": 0,
+          "createdAt": "2025-07-08T09:10:44.675Z"
         }
       ]
     },
@@ -239,6 +263,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T09:10:40.303Z",
+  "lastSync": "2025-07-08T09:10:46.963Z",
   "syncedFrom": "web"
 }
