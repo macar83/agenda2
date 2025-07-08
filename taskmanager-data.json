@@ -2,57 +2,8 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "ding",
-  "currentView": "list",
-  "selectedList": {
-    "id": 3,
-    "name": "Promemoria",
-    "color": "#f59e0b",
-    "tasks": [
-      {
-        "id": 5,
-        "title": "Compleanno Marco",
-        "details": "Comprare regalo",
-        "completed": true,
-        "reminder": "2025-07-08T10:00",
-        "priority": "high",
-        "comments": [
-          {
-            "id": 1,
-            "text": "Gli piacciono i libri di fantascienza",
-            "time": "2025-07-06T15:00",
-            "author": "Tu"
-          }
-        ],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-05T12:00"
-      },
-      {
-        "id": 1751965838054,
-        "title": "ciao",
-        "details": "",
-        "reminder": "",
-        "priority": "medium",
-        "recurring": null,
-        "completed": true,
-        "comments": [],
-        "timeSpent": 0,
-        "createdAt": "2025-07-08T09:10:38.055Z"
-      },
-      {
-        "id": 1751977672672,
-        "title": "Ciccio pasticcio",
-        "details": "",
-        "reminder": "",
-        "priority": "medium",
-        "recurring": null,
-        "completed": false,
-        "comments": [],
-        "timeSpent": 0,
-        "createdAt": "2025-07-08T12:27:52.672Z"
-      }
-    ]
-  },
+  "currentView": "overview",
+  "selectedList": null,
   "lists": [
     {
       "id": 1,
@@ -188,18 +139,6 @@
           "comments": [],
           "timeSpent": 0,
           "createdAt": "2025-07-08T09:10:38.055Z"
-        },
-        {
-          "id": 1751977672672,
-          "title": "Ciccio pasticcio",
-          "details": "",
-          "reminder": "",
-          "priority": "medium",
-          "recurring": null,
-          "completed": false,
-          "comments": [],
-          "timeSpent": 0,
-          "createdAt": "2025-07-08T12:27:52.672Z"
         }
       ]
     },
@@ -226,10 +165,10 @@
   "weather": {
     "temp": 31,
     "condition": "Poco nuvoloso",
-    "humidity": 35,
-    "wind": 51,
+    "humidity": 37,
+    "wind": 52,
     "location": "Roma",
-    "lastUpdate": "14:23"
+    "lastUpdate": "14:37"
   },
   "news": [
     {
@@ -279,6 +218,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T12:33:46.901Z",
+  "lastSync": "2025-07-08T12:37:34.200Z",
   "syncedFrom": "web"
 }
