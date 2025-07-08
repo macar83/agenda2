@@ -53,18 +53,6 @@
         "recurring": null,
         "timeSpent": 0,
         "createdAt": "2025-07-07T16:30:01.011Z"
-      },
-      {
-        "id": 1751965844675,
-        "title": "ciano",
-        "details": "",
-        "reminder": "",
-        "priority": "medium",
-        "recurring": null,
-        "completed": false,
-        "comments": [],
-        "timeSpent": 0,
-        "createdAt": "2025-07-08T09:10:44.675Z"
       }
     ]
   },
@@ -119,18 +107,6 @@
           "recurring": null,
           "timeSpent": 0,
           "createdAt": "2025-07-07T16:30:01.011Z"
-        },
-        {
-          "id": 1751965844675,
-          "title": "ciano",
-          "details": "",
-          "reminder": "",
-          "priority": "medium",
-          "recurring": null,
-          "completed": false,
-          "comments": [],
-          "timeSpent": 0,
-          "createdAt": "2025-07-08T09:10:44.675Z"
         }
       ]
     },
@@ -191,46 +167,31 @@
           "recurring": null,
           "timeSpent": 0,
           "createdAt": "2025-07-05T12:00"
-        },
-        {
-          "id": 1751965838054,
-          "title": "ciao",
-          "details": "",
-          "reminder": "",
-          "priority": "medium",
-          "recurring": null,
-          "completed": false,
-          "comments": [],
-          "timeSpent": 0,
-          "createdAt": "2025-07-08T09:10:38.055Z"
         }
       ]
     }
   ],
   "weather": {
-    "temp": 29,
-    "condition": "Parzialmente nuvoloso",
-    "humidity": 41,
-    "wind": 39,
-    "location": "Roma",
-    "lastUpdate": "11:10"
+    "temp": 24,
+    "condition": "Soleggiato",
+    "humidity": 65,
+    "wind": 12
   },
   "news": [
     {
       "id": 1,
-      "title": "Notizie The Verge non disponibili",
-      "time": "Errore connessione",
-      "source": "Sistema",
-      "url": "https://www.theverge.com",
-      "description": "Problema di connessione con il feed RSS"
+      "title": "Mercati in crescita oggi",
+      "time": "2h fa"
     },
     {
       "id": 2,
-      "title": "Verifica la connessione internet",
-      "time": "Debug",
-      "source": "Sistema",
-      "url": "#",
-      "description": "Riprova tra qualche minuto"
+      "title": "Nuove tecnologie AI",
+      "time": "4h fa"
+    },
+    {
+      "id": 3,
+      "title": "Eventi meteo della settimana",
+      "time": "6h fa"
     }
   ],
   "calendarEvents": [
@@ -263,6 +224,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T09:10:46.963Z",
+  "lastSync": "2025-07-08T09:15:47.344Z",
   "syncedFrom": "web"
 }
