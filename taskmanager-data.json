@@ -210,10 +210,10 @@
   "weather": {
     "temp": 30,
     "condition": "Parzialmente nuvoloso",
-    "humidity": 41,
-    "wind": 38,
+    "humidity": 38,
+    "wind": 45,
     "location": "Roma",
-    "lastUpdate": "11:42"
+    "lastUpdate": "12:41"
   },
   "news": [
     {
@@ -263,6 +263,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T10:27:09.848Z",
+  "lastSync": "2025-07-08T10:41:17.965Z",
   "syncedFrom": "web"
 }
