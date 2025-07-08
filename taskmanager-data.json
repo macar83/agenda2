@@ -2,26 +2,8 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "ding",
-  "currentView": "list",
-  "selectedList": {
-    "id": 1751971289472,
-    "name": "Elenco test",
-    "color": "#3b82f6",
-    "tasks": [
-      {
-        "id": 1751971295519,
-        "title": "hola amigos",
-        "details": "",
-        "reminder": "",
-        "priority": "medium",
-        "recurring": null,
-        "completed": true,
-        "comments": [],
-        "timeSpent": 0,
-        "createdAt": "2025-07-08T10:41:35.519Z"
-      }
-    ]
-  },
+  "currentView": "overview",
+  "selectedList": null,
   "lists": [
     {
       "id": 1,
@@ -182,11 +164,11 @@
   ],
   "weather": {
     "temp": 31,
-    "condition": "Parzialmente nuvoloso",
-    "humidity": 37,
-    "wind": 47,
+    "condition": "Poco nuvoloso",
+    "humidity": 35,
+    "wind": 51,
     "location": "Roma",
-    "lastUpdate": "13:02"
+    "lastUpdate": "14:23"
   },
   "news": [
     {
@@ -236,6 +218,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T11:02:58.384Z",
+  "lastSync": "2025-07-08T12:23:47.131Z",
   "syncedFrom": "web"
 }
