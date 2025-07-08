@@ -2,60 +2,8 @@
   "theme": "light",
   "soundEnabled": true,
   "selectedSound": "ding",
-  "currentView": "list",
-  "selectedList": {
-    "id": 1,
-    "name": "Lavoro",
-    "color": "#3b82f6",
-    "tasks": [
-      {
-        "id": 1,
-        "title": "Preparare presentazione",
-        "details": "Slide per il meeting di venerdì",
-        "completed": true,
-        "reminder": "2025-07-07T14:00",
-        "priority": "high",
-        "comments": [
-          {
-            "id": 1,
-            "text": "Ricorda di includere i grafici Q2",
-            "time": "2025-07-06T10:30",
-            "author": "Tu"
-          }
-        ],
-        "recurring": null,
-        "timeSpent": 120,
-        "createdAt": "2025-07-06T09:00"
-      },
-      {
-        "id": 2,
-        "title": "Rispondere alle email",
-        "details": "Check inbox e risposte urgenti",
-        "completed": true,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": {
-          "type": "daily",
-          "nextDue": "2025-07-08T09:00"
-        },
-        "timeSpent": 30,
-        "createdAt": "2025-07-07T08:00"
-      },
-      {
-        "id": 1751905801011,
-        "title": "pippo 5",
-        "details": "",
-        "completed": true,
-        "reminder": "",
-        "priority": "medium",
-        "comments": [],
-        "recurring": null,
-        "timeSpent": 0,
-        "createdAt": "2025-07-07T16:30:01.011Z"
-      }
-    ]
-  },
+  "currentView": "overview",
+  "selectedList": null,
   "lists": [
     {
       "id": 1,
@@ -172,26 +120,29 @@
     }
   ],
   "weather": {
-    "temp": 24,
-    "condition": "Soleggiato",
-    "humidity": 65,
-    "wind": 12
+    "temp": 29,
+    "condition": "Poco nuvoloso",
+    "humidity": 42,
+    "wind": 38,
+    "location": "Roma",
+    "lastUpdate": "10:57"
   },
   "news": [
     {
       "id": 1,
-      "title": "Mercati in crescita oggi",
-      "time": "2h fa"
+      "title": "Notizie The Verge non disponibili",
+      "time": "Errore connessione",
+      "source": "Sistema",
+      "url": "https://www.theverge.com",
+      "description": "Problema di connessione con il feed RSS"
     },
     {
       "id": 2,
-      "title": "Nuove tecnologie AI",
-      "time": "4h fa"
-    },
-    {
-      "id": 3,
-      "title": "Eventi meteo della settimana",
-      "time": "6h fa"
+      "title": "Verifica la connessione internet",
+      "time": "Debug",
+      "source": "Sistema",
+      "url": "#",
+      "description": "Riprova tra qualche minuto"
     }
   ],
   "calendarEvents": [
@@ -224,6 +175,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T08:55:47.279Z",
+  "lastSync": "2025-07-08T08:57:40.888Z",
   "syncedFrom": "web"
 }
