@@ -7,7 +7,20 @@
     "id": 1751971289472,
     "name": "Elenco test",
     "color": "#3b82f6",
-    "tasks": []
+    "tasks": [
+      {
+        "id": 1751971295519,
+        "title": "hola amigos",
+        "details": "",
+        "reminder": "",
+        "priority": "medium",
+        "recurring": null,
+        "completed": false,
+        "comments": [],
+        "timeSpent": 0,
+        "createdAt": "2025-07-08T10:41:35.519Z"
+      }
+    ]
   },
   "lists": [
     {
@@ -151,7 +164,20 @@
       "id": 1751971289472,
       "name": "Elenco test",
       "color": "#3b82f6",
-      "tasks": []
+      "tasks": [
+        {
+          "id": 1751971295519,
+          "title": "hola amigos",
+          "details": "",
+          "reminder": "",
+          "priority": "medium",
+          "recurring": null,
+          "completed": false,
+          "comments": [],
+          "timeSpent": 0,
+          "createdAt": "2025-07-08T10:41:35.519Z"
+        }
+      ]
     }
   ],
   "weather": {
@@ -210,6 +236,6 @@
     "timeSpentToday": 245,
     "avgTaskTime": 38
   },
-  "lastSync": "2025-07-08T10:41:32.859Z",
+  "lastSync": "2025-07-08T10:41:37.885Z",
   "syncedFrom": "web"
 }
