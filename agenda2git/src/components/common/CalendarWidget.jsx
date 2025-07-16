@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, Clock, MapPin, Users, ExternalLink, RefreshCw, LogIn, AlertCircle } from 'lucide-react';
+import { CalendarFilterWidget } from './CalendarFilterWidget';
 
 export const CalendarWidget = ({ 
   events = [], 
@@ -7,8 +8,25 @@ export const CalendarWidget = ({
   error = null, 
   isAuthenticated = false, 
   onSignIn, 
-  onRefresh 
+  onRefresh,
+  // Props per calendari multipli
+  availableCalendars = [],
+  selectedCalendars = [],
+  loadingCalendars = false,
+  onToggleCalendar,
+  onSelectAllCalendars,
+  onSelectNoneCalendars,
+  onSetCustomCalendarName
 }) => {
+  
+  // Debug
+  console.log('🔧 CalendarWidget debug:', {
+    hasOnToggleCalendar: !!onToggleCalendar,
+    hasOnSetCustomName: !!onSetCustomCalendarName,
+    calendarsCount: availableCalendars.length,
+    selectedCount: selectedCalendars.length,
+    CalendarFilterWidget: typeof CalendarFilterWidget
+  });
   
   const formatEventTime = (start, end, allDay) => {
     if (allDay) {
@@ -53,12 +71,24 @@ export const CalendarWidget = ({
     const eventEnd = new Date(event.end);
     
     if (now >= eventStart && now <= eventEnd) {
-      return 'bg-green-100 border-green-300 text-green-800'; // In corso
+      return 'bg-green-100 border-green-300 text-green-800';
     } else if (eventStart > now) {
-      return 'bg-blue-100 border-blue-300 text-blue-800'; // Futuro
+      return 'bg-blue-100 border-blue-300 text-blue-800';
     } else {
-      return 'bg-gray-100 border-gray-300 text-gray-600'; // Passato
+      return 'bg-gray-100 border-gray-300 text-gray-600';
     }
+  };
+
+  const getCalendarIndicator = (event) => {
+    if (!event.calendarColor) return null;
+    
+    return (
+      <div 
+        className="w-3 h-3 rounded-full border border-white shadow-sm flex-shrink-0"
+        style={{ backgroundColor: event.calendarColor }}
+        title={`Calendario: ${event.calendarName}`}
+      />
+    );
   };
 
   // Non autenticato
@@ -89,25 +119,79 @@ export const CalendarWidget = ({
 
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6">
+      {/* Header con filtri */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
           <Calendar size={20} className="text-blue-500" />
           <span>Calendario Settimana</span>
         </h3>
-        <button
-          onClick={onRefresh}
-          disabled={loading}
-          className={`p-2 rounded-lg transition-colors ${
-            loading 
-              ? 'text-gray-400 cursor-not-allowed' 
-              : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-          }`}
-          title="Aggiorna eventi"
-        >
-          <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-        </button>
+        
+        <div className="flex items-center space-x-2">
+          {/* Filtro calendari */}
+          {availableCalendars.length > 0 && (
+            <CalendarFilterWidget
+              availableCalendars={availableCalendars}
+              selectedCalendars={selectedCalendars}
+              onToggleCalendar={onToggleCalendar}
+              onSelectAll={onSelectAllCalendars}
+              onSelectNone={onSelectNoneCalendars}
+              onSetCustomName={onSetCustomCalendarName}
+              loading={loadingCalendars}
+            />
+          )}
+          
+          {/* Pulsante refresh */}
+          <button
+            onClick={onRefresh}
+            disabled={loading}
+            className={`p-2 rounded-lg transition-colors ${
+              loading 
+                ? 'text-gray-400 cursor-not-allowed' 
+                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+            }`}
+            title="Aggiorna eventi"
+          >
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+          </button>
+        </div>
       </div>
 
+      {/* Statistiche calendari */}
+      {isAuthenticated && availableCalendars.length > 0 && (
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+          <div className="text-xs text-gray-600 mb-2">Calendari disponibili:</div>
+          <div className="flex flex-wrap gap-2">
+            {availableCalendars.map(calendar => {
+              const isSelected = selectedCalendars.includes(calendar.id);
+              const eventCount = events.filter(e => e.calendarId === calendar.id).length;
+              
+              return (
+                <div
+                  key={calendar.id}
+                  className={`inline-flex items-center space-x-1 px-2 py-1 rounded text-xs transition-colors ${
+                    isSelected 
+                      ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                      : 'bg-gray-200 text-gray-600'
+                  }`}
+                >
+                  <div 
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: calendar.backgroundColor }}
+                  />
+                  <span className="font-medium">{calendar.name}</span>
+                  {isSelected && eventCount > 0 && (
+                    <span className="bg-blue-200 text-blue-800 px-1 rounded">
+                      {eventCount}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Loading State */}
       {loading ? (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -125,6 +209,12 @@ export const CalendarWidget = ({
             Riprova
           </button>
         </div>
+      ) : selectedCalendars.length === 0 ? (
+        <div className="text-center py-8">
+          <Calendar className="mx-auto text-gray-400 mb-4" size={48} />
+          <p className="text-gray-500 mb-2">Nessun calendario selezionato</p>
+          <p className="text-gray-400 text-sm">Seleziona almeno un calendario per vedere gli eventi</p>
+        </div>
       ) : events.length === 0 ? (
         <div className="text-center py-8">
           <Calendar className="mx-auto text-gray-400 mb-4" size={48} />
@@ -135,13 +225,26 @@ export const CalendarWidget = ({
         <div className="space-y-3 max-h-80 overflow-y-auto">
           {events.map((event) => (
             <div 
-              key={event.id} 
+              key={`${event.calendarId}-${event.id}`}
               className={`border rounded-lg p-4 transition-all hover:shadow-sm ${getEventStatusColor(event)}`}
             >
               <div className="flex items-start justify-between mb-2">
-                <h4 className="font-medium text-sm leading-tight pr-2">
-                  {event.title}
-                </h4>
+                <div className="flex items-start space-x-2 flex-1 min-w-0">
+                  {getCalendarIndicator(event)}
+                  
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm leading-tight pr-2">
+                      {event.title}
+                    </h4>
+                    
+                    {event.calendarName && event.calendarName !== 'primary' && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        📅 {event.calendarName}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
                 {event.htmlLink && (
                   <a
                     href={event.htmlLink}
@@ -191,10 +294,18 @@ export const CalendarWidget = ({
         </div>
       )}
 
+      {/* Footer con info sincronizzazione */}
       <div className="mt-4 pt-4 border-t">
-        <p className="text-xs text-gray-500 text-center">
-          📅 Sincronizzazione automatica ogni 15 minuti • Google Calendar
-        </p>
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <div>
+            📅 Sincronizzazione automatica ogni 10 minuti
+          </div>
+          {events.length > 0 && (
+            <div>
+              {events.length} eventi da {selectedCalendars.length} calendari
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
