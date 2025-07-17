@@ -41,9 +41,9 @@ export const Overview = () => {
     fetchRecentEmails,
     formatEmailDate,
     getUnreadCount,
-    markAsRead,      // 🆕
-    archiveEmail,    // 🆕
-    labelColors      // 🆕
+    markAsRead,
+    archiveEmail,
+    labelColors
   } = useGmail();
 
   // 🔧 DEBUG: Verifica che le funzioni siano disponibili
@@ -76,9 +76,16 @@ export const Overview = () => {
     return count;
   }, 0);
 
-  // Calcola eventi di oggi dal calendario (con supporto multi-calendario)
+  // 📅 NUOVO: Calcola eventi di oggi dal calendario
   const todayEvents = getTodayEvents();
   const upcomingEvents = getUpcomingEvents();
+
+  console.log('📅 Eventi oggi debug:', {
+    todayEventsCount: todayEvents.length,
+    isCalendarAuthenticated,
+    events: events.length,
+    todayEventsPreview: todayEvents.slice(0, 3).map(e => ({ title: e.title, start: e.start }))
+  });
 
   const handleGoToLists = () => {
     console.log('📋 Going to Lists view');
@@ -123,11 +130,22 @@ export const Overview = () => {
       
       {/* Statistiche */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* 🆕 SOSTITUITO: Eventi Oggi invece di Liste Totali */}
         <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Liste Totali</p>
-              <p className="text-2xl font-bold text-gray-900">{lists.length}</p>
+              <p className="text-sm text-gray-500">Eventi Oggi</p>
+              <p className="text-2xl font-bold text-gray-900">{todayEvents.length}</p>
+              {isCalendarAuthenticated && todayEvents.length > 0 && (
+                <p className="text-xs text-gray-400 mt-1">
+                  {todayEvents[0].start && formatDate(todayEvents[0].start).split(' ')[1]} primo evento
+                </p>
+              )}
+              {!isCalendarAuthenticated && (
+                <p className="text-xs text-orange-500 mt-1">
+                  Connetti calendario
+                </p>
+              )}
             </div>
             <Calendar className="text-blue-500" size={24} />
           </div>
@@ -180,63 +198,57 @@ export const Overview = () => {
           </h3>
           
           {lists.length === 0 ? (
-            <div className="text-center py-8">
-              <Calendar className="mx-auto text-gray-400 mb-4" size={48} />
-              <p className="text-gray-500 mb-2">Nessuna lista creata ancora.</p>
+            <div className="text-center py-6">
+              <Calendar className="mx-auto text-gray-400 mb-3" size={32} />
+              <p className="text-gray-500 text-sm mb-3">Nessuna lista ancora creata</p>
               <button
                 onClick={handleGoToLists}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
               >
-                Crea la tua prima lista!
+                Crea la tua prima lista →
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
-              {lists.slice(0, 3).map(list => (
+            <div className="space-y-3">
+              {lists.slice(0, 4).map(list => (
                 <button
                   key={list.id}
                   onClick={() => handleListClick(list)}
-                  className="w-full text-left border rounded-lg p-4 hover:bg-gray-50 hover:shadow-sm transition-all duration-200 group"
+                  className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border transition-colors text-left"
                 >
-                  <div className="flex items-center space-x-3 mb-2">
+                  <div className="flex items-center space-x-3">
                     <div 
-                      className="w-4 h-4 rounded-full"
+                      className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: list.color }}
                     />
-                    <h4 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
-                      {list.name}
-                    </h4>
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    {list.incomplete_tasks || 0} attivi / {list.total_tasks || 0} totali
-                  </p>
-                  {(list.total_tasks || 0) > 0 && (
-                    <div className="mt-2 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                        style={{ 
-                          width: `${(((list.total_tasks || 0) - (list.incomplete_tasks || 0)) / (list.total_tasks || 1)) * 100}%` 
-                        }}
-                      />
+                    <div>
+                      <p className="font-medium text-gray-900">{list.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {list.incomplete_tasks || 0} di {list.total_tasks || 0} task
+                      </p>
                     </div>
-                  )}
+                  </div>
+                  <ArrowRight className="text-gray-400" size={16} />
                 </button>
               ))}
-              {lists.length > 3 && (
+              
+              {lists.length > 4 && (
                 <button
                   onClick={handleGoToLists}
-                  className="w-full text-center py-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  className="w-full p-2 text-center text-blue-600 hover:text-blue-700 text-sm font-medium"
                 >
-                  Mostra altre {lists.length - 3} liste
+                  Vedi tutte le {lists.length} liste →
                 </button>
               )}
             </div>
           )}
         </div>
 
-        {/* Google Calendar Widget con supporto multi-calendario */}
+        {/* Google Calendar Widget */}
         <CalendarWidget
-          events={upcomingEvents}
+          events={events}
+          todayEvents={todayEvents}
+          upcomingEvents={upcomingEvents}
           loading={calendarLoading}
           error={calendarError}
           isAuthenticated={isCalendarAuthenticated}
@@ -251,93 +263,85 @@ export const Overview = () => {
           onSetCustomCalendarName={setCustomCalendarName}
         />
 
-        {/* Colonna combinata Gmail + News */}
-        <div className="space-y-6">
-          {/* Gmail Widget */}
-          <GmailWidget
-            emails={emails}
-            loading={gmailLoading}
-            error={gmailError}
-            isAuthenticated={isGmailAuthenticated}
-            unreadCount={getUnreadCount()}
-            onSignIn={signInGmail}
-            onRefresh={() => fetchRecentEmails()}
-            formatEmailDate={formatEmailDate}
-            onMarkAsRead={markAsRead}
-            onArchiveEmail={archiveEmail}
-            labelColors={labelColors}
-          />
-
-          {/* News Tech RSS */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-                <Rss size={20} className="text-orange-500" />
-                <span>News Tech</span>
-              </h3>
-              <RSSSourceSelector 
-                selectedSourceId={data.selectedRssSource}
-                onSourceChange={handleRssSourceChange}
-                sources={sources}
-              />
-            </div>
-            
-            {newsLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-500 text-sm">Caricamento notizie...</p>
-              </div>
-            ) : newsError ? (
-              <div className="text-center py-8">
-                <AlertCircle className="mx-auto text-red-400 mb-4" size={32} />
-                <p className="text-red-600 text-sm mb-2 font-medium">Errore nel caricamento</p>
-                <p className="text-gray-500 text-xs mb-4">{newsError}</p>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm transition-colors">
-                  Riprova
-                </button>
-              </div>
-            ) : news.length === 0 ? (
-              <div className="text-center py-8">
-                <Rss className="mx-auto text-gray-400 mb-4" size={48} />
-                <p className="text-gray-500">Nessuna notizia disponibile</p>
-              </div>
-            ) : (
-              <div className="space-y-4 max-h-64 overflow-y-auto">
-                {news.slice(0, 6).map((article, index) => (
-                  <div key={index} className="border rounded-lg p-3 hover:bg-gray-50 transition-colors">
-                    <h4 className="font-medium text-sm text-gray-900 mb-1 leading-tight">
-                      {article.title}
-                    </h4>
-                    {article.description && (
-                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">
-                        {article.description}
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
-                        {formatDate(article.pubDate)}
-                      </span>
-                      {article.link && (
-                        <a
-                          href={article.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800"
-                          title="Leggi articolo completo"
-                        >
-                          <ExternalLink size={14} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Gmail Widget */}
+        <GmailWidget
+          emails={emails}
+          loading={gmailLoading}
+          error={gmailError}
+          isAuthenticated={isGmailAuthenticated}
+          onSignIn={signInGmail}
+          onRefresh={fetchRecentEmails}
+          formatEmailDate={formatEmailDate}
+          getUnreadCount={getUnreadCount}
+          onMarkAsRead={markAsRead}
+          onArchiveEmail={archiveEmail}
+          labelColors={labelColors}
+        />
       </div>
 
-      {/* Actions Quick */}
+      {/* News RSS */}
+      <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+            <Rss size={20} className="text-orange-500" />
+            <span>Ultime Notizie</span>
+          </h3>
+          
+          <RSSSourceSelector
+            sources={sources}
+            selectedSource={data.selectedRssSource}
+            onSourceChange={handleRssSourceChange}
+          />
+        </div>
+
+        {newsLoading && (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+            <span className="ml-2 text-gray-600">Caricamento notizie...</span>
+          </div>
+        )}
+
+        {newsError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="text-red-500" size={16} />
+              <p className="text-red-700 text-sm">{newsError}</p>
+            </div>
+          </div>
+        )}
+
+        {!newsLoading && !newsError && news.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {news.slice(0, 6).map((article, index) => (
+              <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                <h4 className="font-medium text-gray-900 mb-2 line-clamp-2">{article.title}</h4>
+                <p className="text-sm text-gray-600 mb-3 line-clamp-3">{article.description}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">{formatDate(article.pubDate)}</span>
+                  <a
+                    href={article.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1"
+                  >
+                    <span>Leggi</span>
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!newsLoading && !newsError && news.length === 0 && (
+          <div className="text-center py-8">
+            <Rss className="mx-auto text-gray-400 mb-3" size={32} />
+            <p className="text-gray-500">Nessuna notizia disponibile al momento</p>
+          </div>
+        )}
+      </div>
+
+      {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <button
           onClick={handleGoToLists}

@@ -13,7 +13,25 @@ export const RSS_SOURCES = [
     name: 'Wired',
     url: 'https://www.wired.com/feed/rss',
     color: 'black'
-  }
+  },
+   {
+    id: 'theverge',
+    name: 'The Verge',
+    url: 'https://www.theverge.com/rss/index.xml',
+    color: 'purple'
+  },
+ {
+  id: 'sole24ore-italia',
+  name: 'Il Sole 24 Ore - Italia',
+  url: 'https://www.ilsole24ore.com/rss/italia.xml',
+  color: 'purple'
+},
+{
+  id: 'sole24ore-economia',
+  name: 'Il Sole 24 Ore - Economia',
+  url: 'https://www.ilsole24ore.com/rss/economia.xml',
+  color: 'red'
+}
 ];
 
 export const DEFAULT_RSS_SOURCE = 'techcrunch';

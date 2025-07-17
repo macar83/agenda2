@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 // Configurazione Google Calendar API
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -6,11 +6,13 @@ const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
 const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
-// CHIAVI LOCALSTORAGE PER PERSISTENZA
-const GOOGLE_TOKEN_KEY = 'google_calendar_token';
-const GOOGLE_TOKEN_EXPIRY_KEY = 'google_calendar_token_expiry';
+// CHIAVI LOCALSTORAGE PER PERSISTENZA MIGLIORATA
+const GOOGLE_TOKEN_KEY = 'google_calendar_token_v2';
+const GOOGLE_REFRESH_TOKEN_KEY = 'google_calendar_refresh_token';
+const GOOGLE_TOKEN_EXPIRY_KEY = 'google_calendar_token_expiry_v2';
+const GOOGLE_AUTH_STATE_KEY = 'google_calendar_auth_state';
 const CALENDAR_FILTERS_KEY = 'google_calendar_filters';
-const CALENDAR_CUSTOM_NAMES_KEY = 'google_calendar_custom_names'; // 🆕
+const CALENDAR_CUSTOM_NAMES_KEY = 'google_calendar_custom_names';
 
 export const useGoogleCalendar = () => {
   const [events, setEvents] = useState([]);
@@ -20,23 +22,211 @@ export const useGoogleCalendar = () => {
   const [gapi, setGapi] = useState(null);
   const [tokenClient, setTokenClient] = useState(null);
   
-  // 🆕 STATI PER CALENDARI MULTIPLI
+  // STATI PER CALENDARI MULTIPLI
   const [availableCalendars, setAvailableCalendars] = useState([]);
   const [selectedCalendars, setSelectedCalendars] = useState(['primary']);
   const [loadingCalendars, setLoadingCalendars] = useState(false);
 
+  // 🆕 REF PER GESTIONE REFRESH TOKEN
+  const refreshIntervalRef = useRef(null);
+  const isRefreshingRef = useRef(false);
+
   // Debug delle credenziali
-  console.log('🔧 Google Calendar Config:', {
+  console.log('🔧 Google Calendar Config Enhanced:', {
     hasApiKey: !!GOOGLE_API_KEY,
     hasClientId: !!GOOGLE_CLIENT_ID,
-    apiKey: GOOGLE_API_KEY?.substring(0, 10) + '...',
-    clientId: GOOGLE_CLIENT_ID?.substring(0, 15) + '...',
     isAuthenticated,
     hasTokenClient: !!tokenClient,
-    hasGapi: !!gapi
+    hasGapi: !!gapi,
+    hasStoredAuth: !!localStorage.getItem(GOOGLE_AUTH_STATE_KEY)
   });
 
-  // 🆕 FUNZIONI PER NOMI PERSONALIZZATI
+  // 🆕 FUNZIONI PERSISTENZA MIGLIORATA
+  const saveAuthState = (authData) => {
+    try {
+      const authState = {
+        isAuthenticated: true,
+        timestamp: Date.now(),
+        tokenExpiry: authData.tokenExpiry,
+        hasRefreshToken: !!authData.refresh_token
+      };
+      
+      localStorage.setItem(GOOGLE_AUTH_STATE_KEY, JSON.stringify(authState));
+      localStorage.setItem(GOOGLE_TOKEN_KEY, JSON.stringify(authData.token));
+      localStorage.setItem(GOOGLE_TOKEN_EXPIRY_KEY, authData.tokenExpiry.toString());
+      
+      if (authData.refresh_token) {
+        localStorage.setItem(GOOGLE_REFRESH_TOKEN_KEY, authData.refresh_token);
+      }
+      
+      console.log('💾 Stato auth Google Calendar salvato:', {
+        expiry: new Date(authData.tokenExpiry).toLocaleString(),
+        hasRefresh: !!authData.refresh_token
+      });
+    } catch (error) {
+      console.error('❌ Errore salvataggio stato auth:', error);
+    }
+  };
+
+  const loadAuthState = () => {
+    try {
+      const authState = localStorage.getItem(GOOGLE_AUTH_STATE_KEY);
+      const savedToken = localStorage.getItem(GOOGLE_TOKEN_KEY);
+      const savedExpiry = localStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY);
+      const refreshToken = localStorage.getItem(GOOGLE_REFRESH_TOKEN_KEY);
+
+      if (!authState || !savedToken || !savedExpiry) {
+        console.log('📦 Nessun stato auth salvato');
+        return null;
+      }
+
+      const parsedState = JSON.parse(authState);
+      const expiryTime = parseInt(savedExpiry);
+      const now = Date.now();
+
+      // 🆕 MARGINE PIÙ GENEROSO: 30 minuti invece di 5
+      const refreshMargin = 30 * 60 * 1000; // 30 minuti
+
+      if (now >= (expiryTime - refreshMargin)) {
+        console.log('⏰ Token in scadenza, tentativo refresh...');
+        
+        if (refreshToken) {
+          // Prova a fare refresh del token
+          return {
+            needsRefresh: true,
+            refreshToken: refreshToken,
+            oldToken: JSON.parse(savedToken)
+          };
+        } else {
+          console.log('❌ Nessun refresh token disponibile');
+          clearAuthState();
+          return null;
+        }
+      }
+
+      console.log('✅ Stato auth valido caricato:', {
+        expiry: new Date(expiryTime).toLocaleString(),
+        timeLeft: Math.round((expiryTime - now) / (1000 * 60)) + ' minuti'
+      });
+
+      return {
+        token: JSON.parse(savedToken),
+        expiry: expiryTime,
+        refreshToken: refreshToken
+      };
+    } catch (error) {
+      console.error('❌ Errore caricamento stato auth:', error);
+      clearAuthState();
+      return null;
+    }
+  };
+
+  const clearAuthState = () => {
+    localStorage.removeItem(GOOGLE_AUTH_STATE_KEY);
+    localStorage.removeItem(GOOGLE_TOKEN_KEY);
+    localStorage.removeItem(GOOGLE_TOKEN_EXPIRY_KEY);
+    localStorage.removeItem(GOOGLE_REFRESH_TOKEN_KEY);
+    console.log('🗑️ Stato auth Google Calendar pulito');
+  };
+
+  // 🆕 FUNZIONE PER REFRESH AUTOMATICO TOKEN
+  const refreshAccessToken = useCallback(async (refreshToken) => {
+    if (isRefreshingRef.current) {
+      console.log('🔄 Refresh già in corso, skip...');
+      return false;
+    }
+
+    isRefreshingRef.current = true;
+    
+    try {
+      console.log('🔄 Tentativo refresh token...');
+
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: GOOGLE_CLIENT_ID,
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Refresh failed: ${response.status}`);
+      }
+
+      const tokenData = await response.json();
+      
+      const newTokenData = {
+        token: {
+          access_token: tokenData.access_token,
+          expires_in: tokenData.expires_in || 3600
+        },
+        tokenExpiry: Date.now() + (tokenData.expires_in * 1000),
+        refresh_token: refreshToken // Mantieni quello esistente
+      };
+
+      // Salva il nuovo token
+      saveAuthState(newTokenData);
+      
+      // Imposta il nuovo token in GAPI
+      if (window.gapi && window.gapi.client) {
+        window.gapi.client.setToken({
+          access_token: tokenData.access_token
+        });
+      }
+
+      console.log('✅ Token refreshato con successo');
+      setError(null);
+      return true;
+
+    } catch (error) {
+      console.error('❌ Errore refresh token:', error);
+      clearAuthState();
+      setIsAuthenticated(false);
+      setError('Sessione scaduta. Effettua nuovamente il login.');
+      return false;
+    } finally {
+      isRefreshingRef.current = false;
+    }
+  }, []);
+
+  // 🆕 SETUP REFRESH AUTOMATICO
+  const setupTokenRefresh = useCallback((expiryTime) => {
+    // Pulisci interval esistente
+    if (refreshIntervalRef.current) {
+      clearInterval(refreshIntervalRef.current);
+    }
+
+    const now = Date.now();
+    const timeUntilRefresh = Math.max(0, expiryTime - now - (20 * 60 * 1000)); // 20 minuti prima
+
+    console.log('⏰ Setup refresh automatico:', {
+      expiry: new Date(expiryTime).toLocaleString(),
+      refreshIn: Math.round(timeUntilRefresh / (1000 * 60)) + ' minuti'
+    });
+
+    // Imposta timer per refresh automatico
+    refreshIntervalRef.current = setTimeout(async () => {
+      const refreshToken = localStorage.getItem(GOOGLE_REFRESH_TOKEN_KEY);
+      if (refreshToken && isAuthenticated) {
+        console.log('🔄 Refresh automatico token...');
+        const success = await refreshAccessToken(refreshToken);
+        
+        if (success) {
+          // Riimposta il timer per il prossimo refresh
+          const newExpiry = parseInt(localStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY));
+          if (newExpiry) {
+            setupTokenRefresh(newExpiry);
+          }
+        }
+      }
+    }, timeUntilRefresh);
+  }, [refreshAccessToken, isAuthenticated]);
+
+  // FUNZIONI PER NOMI PERSONALIZZATI
   const saveCustomNames = (customNames) => {
     try {
       localStorage.setItem(CALENDAR_CUSTOM_NAMES_KEY, JSON.stringify(customNames));
@@ -56,31 +246,24 @@ export const useGoogleCalendar = () => {
   };
 
   const setCustomCalendarName = (calendarId, customName) => {
-    console.log('🔧 setCustomCalendarName chiamata:', { calendarId, customName });
-    
     const currentCustomNames = loadCustomNames();
     const updatedNames = { ...currentCustomNames, [calendarId]: customName };
     saveCustomNames(updatedNames);
     
-    // Aggiorna i calendari disponibili
     setAvailableCalendars(prev => {
       const updated = prev.map(cal => 
         cal.id === calendarId 
-          ? { ...cal, name: customName }
+          ? { ...cal, displayName: customName }
           : cal
       );
-      console.log('📅 Calendari aggiornati:', updated.map(c => ({ id: c.id, name: c.name })));
       return updated;
     });
-    
-    console.log(`✅ Nome personalizzato impostato per ${calendarId}: ${customName}`);
   };
 
-  // 🆕 FUNZIONE PER SALVARE/CARICARE FILTRI CALENDARI
+  // FUNZIONI PER FILTRI CALENDARI
   const saveCalendarFilters = (calendarIds) => {
     try {
       localStorage.setItem(CALENDAR_FILTERS_KEY, JSON.stringify(calendarIds));
-      console.log('💾 Filtri calendari salvati:', calendarIds);
     } catch (error) {
       console.error('❌ Errore salvataggio filtri:', error);
     }
@@ -96,261 +279,45 @@ export const useGoogleCalendar = () => {
     }
   };
 
-  // 🆕 FUNZIONE PER SALVARE TOKEN
-  const saveTokenToStorage = (token) => {
-    try {
-      console.log('💾 Salvando token Google Calendar...');
-      localStorage.setItem(GOOGLE_TOKEN_KEY, JSON.stringify(token));
-      
-      const expiryTime = Date.now() + (token.expires_in ? token.expires_in * 1000 : 3600000);
-      localStorage.setItem(GOOGLE_TOKEN_EXPIRY_KEY, expiryTime.toString());
-      
-      console.log('✅ Token salvato, scadenza:', new Date(expiryTime).toLocaleString());
-    } catch (error) {
-      console.error('❌ Errore salvataggio token:', error);
-    }
-  };
-
-  // 🆕 FUNZIONE PER CARICARE TOKEN DAL STORAGE
-  const loadTokenFromStorage = () => {
-    try {
-      const savedToken = localStorage.getItem(GOOGLE_TOKEN_KEY);
-      const savedExpiry = localStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY);
-      
-      if (!savedToken || !savedExpiry) {
-        console.log('📦 Nessun token salvato trovato');
-        return null;
-      }
-
-      const expiryTime = parseInt(savedExpiry);
-      const now = Date.now();
-      
-      if (now >= (expiryTime - 300000)) {
-        console.log('⏰ Token Google Calendar scaduto, rimozione...');
-        clearStoredToken();
-        return null;
-      }
-
-      const token = JSON.parse(savedToken);
-      console.log('✅ Token valido caricato dal storage, scadenza:', new Date(expiryTime).toLocaleString());
-      return token;
-      
-    } catch (error) {
-      console.error('❌ Errore caricamento token:', error);
-      clearStoredToken();
-      return null;
-    }
-  };
-
-  // 🆕 FUNZIONE PER RIMUOVERE TOKEN DAL STORAGE
-  const clearStoredToken = () => {
-    localStorage.removeItem(GOOGLE_TOKEN_KEY);
-    localStorage.removeItem(GOOGLE_TOKEN_EXPIRY_KEY);
-    console.log('🗑️ Token Google Calendar rimosso dal storage');
-  };
-
-  // 🆕 FUNZIONE PER RECUPERARE LISTA CALENDARI
-  const fetchAvailableCalendars = async () => {
-    if (!isAuthenticated || !gapi) {
-      console.log('⚠️ Non autenticato o GAPI non pronto per lista calendari');
-      return;
-    }
-
-    setLoadingCalendars(true);
-    
-    try {
-      console.log('📋 Recuperando lista calendari...');
-      
-      const response = await gapi.client.calendar.calendarList.list({
-        minAccessRole: 'reader'
-      });
-
-      const calendars = response.result.items || [];
-      
-      // Formatta calendari con logica migliorata per i nomi
-      const formattedCalendars = calendars.map(cal => {
-        let displayName = cal.summary || 'Calendario senza nome';
-        
-        // Se il nome è generico, prova a ricavare un nome migliore dall'ID
-        if (displayName === 'Calendario' || displayName === 'Calendar') {
-          // Prova a estrarre il nome dall'email/ID del calendario
-          if (cal.id && cal.id.includes('@')) {
-            const emailPart = cal.id.split('@')[0];
-            // Capitalizza la prima lettera
-            displayName = emailPart.charAt(0).toUpperCase() + emailPart.slice(1);
-          }
-        }
-        
-        // Applica nomi personalizzati se esistono
-        const customNames = loadCustomNames();
-        if (customNames[cal.id]) {
-          displayName = customNames[cal.id];
-        }
-        
-        return {
-          id: cal.id,
-          name: displayName,
-          originalName: cal.summary, // Mantieni il nome originale per debug
-          description: cal.description || '',
-          primary: cal.primary || false,
-          backgroundColor: cal.backgroundColor || '#4285f4',
-          foregroundColor: cal.foregroundColor || '#ffffff',
-          accessRole: cal.accessRole,
-          selected: cal.selected !== false,
-          timeZone: cal.timeZone
-        };
-      });
-
-      // Ordina: primary per primo, poi alfabetico
-      formattedCalendars.sort((a, b) => {
-        if (a.primary) return -1;
-        if (b.primary) return 1;
-        return a.name.localeCompare(b.name);
-      });
-
-      setAvailableCalendars(formattedCalendars);
-      
-      console.log('✅ Calendari disponibili:', formattedCalendars.map(c => ({
-        id: c.id,
-        name: c.name,
-        primary: c.primary
-      })));
-
-      // Carica filtri salvati o imposta default
-      const savedFilters = loadCalendarFilters();
-      setSelectedCalendars(savedFilters);
-
-    } catch (err) {
-      console.error('❌ Errore recupero calendari:', err);
-      setError(`Errore nel caricamento calendari: ${err.message}`);
-    } finally {
-      setLoadingCalendars(false);
-    }
-  };
-
-  // FUNZIONE PER MODIFICARE SELEZIONE CALENDARI
   const toggleCalendar = (calendarId) => {
-    console.log('🔧 toggleCalendar chiamata:', { calendarId, currentSelection: selectedCalendars });
-    
     const newSelection = selectedCalendars.includes(calendarId)
       ? selectedCalendars.filter(id => id !== calendarId)
       : [...selectedCalendars, calendarId];
     
     setSelectedCalendars(newSelection);
     saveCalendarFilters(newSelection);
-    
-    console.log('📅 Calendari selezionati aggiornati:', newSelection);
   };
 
   const selectAllCalendars = () => {
     const allIds = availableCalendars.map(cal => cal.id);
     setSelectedCalendars(allIds);
     saveCalendarFilters(allIds);
-    console.log('📅 Tutti i calendari selezionati');
   };
 
   const selectNoneCalendars = () => {
     setSelectedCalendars([]);
     saveCalendarFilters([]);
-    console.log('📅 Nessun calendario selezionato');
   };
 
-  // Inizializza Google API con Google Identity Services (GIS)
-  useEffect(() => {
-    const initializeGoogleServices = async () => {
-      if (!GOOGLE_API_KEY || !GOOGLE_CLIENT_ID) {
-        const missingCreds = [];
-        if (!GOOGLE_API_KEY) missingCreds.push('REACT_APP_GOOGLE_API_KEY');
-        if (!GOOGLE_CLIENT_ID) missingCreds.push('REACT_APP_GOOGLE_CLIENT_ID');
-        
-        setError(`Credenziali mancanti: ${missingCreds.join(', ')}`);
-        console.error('❌ Credenziali Google mancanti:', missingCreds);
-        return;
+  // FILTRO EVENTI FUTURI
+  const filterFutureEvents = (eventsList) => {
+    const now = new Date();
+    
+    return eventsList.filter(event => {
+      const eventEnd = new Date(event.end);
+      
+      if (event.allDay) {
+        const eventDate = new Date(event.start);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return eventDate >= today;
+      } else {
+        return eventEnd > now;
       }
+    });
+  };
 
-      try {
-        await loadGapiScript();
-        console.log('✅ GAPI script caricato');
-
-        await loadGisScript();
-        console.log('✅ GIS script caricato');
-
-        await new Promise((resolve, reject) => {
-          window.gapi.load('client', {
-            callback: resolve,
-            onerror: reject
-          });
-        });
-
-        await window.gapi.client.init({
-          apiKey: GOOGLE_API_KEY,
-          discoveryDocs: [DISCOVERY_DOC],
-        });
-
-        console.log('✅ GAPI client inizializzato');
-        setGapi(window.gapi);
-
-        const client = window.google.accounts.oauth2.initTokenClient({
-          client_id: GOOGLE_CLIENT_ID,
-          scope: SCOPES,
-          callback: (response) => {
-            console.log('🔐 Token ricevuto:', response);
-            if (response.access_token) {
-              window.gapi.client.setToken({
-                access_token: response.access_token
-              });
-              
-              saveTokenToStorage(response);
-              setIsAuthenticated(true);
-              console.log('✅ Autenticazione completata e salvata');
-            }
-          },
-          error_callback: (error) => {
-            console.error('❌ Errore OAuth:', error);
-            setError(`Errore autenticazione: ${error.type}`);
-            clearStoredToken();
-          }
-        });
-
-        setTokenClient(client);
-        console.log('✅ Token client inizializzato');
-
-        // Controlla token salvato
-        const savedToken = loadTokenFromStorage();
-        if (savedToken && savedToken.access_token) {
-          console.log('🔄 Ripristino sessione da token salvato...');
-          window.gapi.client.setToken({
-            access_token: savedToken.access_token
-          });
-          setIsAuthenticated(true);
-          console.log('✅ Sessione ripristinata da storage');
-        } else {
-          const token = window.gapi.client.getToken();
-          if (token && token.access_token) {
-            setIsAuthenticated(true);
-            console.log('✅ Token esistente trovato in gapi client');
-          }
-        }
-
-        console.log('🎉 Google Calendar API completamente inizializzato (Multi-Calendar)');
-
-      } catch (err) {
-        console.error('❌ Errore inizializzazione:', err);
-        setError(`Errore inizializzazione: ${err.message || err}`);
-      }
-    };
-
-    initializeGoogleServices();
-  }, []);
-
-  // 🆕 CARICA CALENDARI QUANDO AUTENTICATO
-  useEffect(() => {
-    if (isAuthenticated && gapi) {
-      fetchAvailableCalendars();
-    }
-  }, [isAuthenticated, gapi]);
-
-  // Carica GAPI script
+  // Carica script GAPI e GIS
   const loadGapiScript = () => {
     return new Promise((resolve, reject) => {
       if (window.gapi) {
@@ -366,7 +333,6 @@ export const useGoogleCalendar = () => {
     });
   };
 
-  // Carica Google Identity Services script
   const loadGisScript = () => {
     return new Promise((resolve, reject) => {
       if (window.google?.accounts?.oauth2) {
@@ -382,36 +348,47 @@ export const useGoogleCalendar = () => {
     });
   };
 
-  // Funzione per il login
+  // 🆕 FUNZIONE LOGIN MIGLIORATA
   const signIn = async () => {
     try {
+      console.log('🔐 Avvio processo di login migliorato...');
+      
       if (!tokenClient) {
-        setError('Token client non inizializzato');
+        setError('Token client non inizializzato. Ricarica la pagina.');
         return;
       }
 
-      console.log('🔐 Avvio processo di login...');
-      
-      const savedToken = loadTokenFromStorage();
-      if (savedToken && savedToken.access_token) {
-        console.log('✅ Token valido già presente, utilizzando quello...');
+      // Controlla stato salvato
+      const authState = loadAuthState();
+      if (authState && !authState.needsRefresh) {
+        console.log('✅ Ripristino da auth salvato...');
         window.gapi.client.setToken({
-          access_token: savedToken.access_token
+          access_token: authState.token.access_token
         });
         setIsAuthenticated(true);
+        setError(null);
+        setupTokenRefresh(authState.expiry);
         return;
       }
 
-      const token = window.gapi.client.getToken();
-      if (token && token.access_token) {
-        console.log('✅ Token già presente in gapi client, refresh...');
-        setIsAuthenticated(true);
-        return;
+      if (authState && authState.needsRefresh) {
+        console.log('🔄 Token necessita refresh...');
+        const success = await refreshAccessToken(authState.refreshToken);
+        if (success) {
+          setIsAuthenticated(true);
+          const newExpiry = parseInt(localStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY));
+          setupTokenRefresh(newExpiry);
+          return;
+        }
       }
 
-      console.log('🔄 Richiedendo nuovo token...');
+      console.log('🔄 Richiedendo nuovo token con refresh capability...');
+      setError(null);
+      
+      // 🆕 RICHIESTA CON REFRESH TOKEN
       tokenClient.requestAccessToken({
-        prompt: 'consent'
+        prompt: 'consent',
+        include_granted_scopes: true
       });
       
     } catch (err) {
@@ -423,8 +400,17 @@ export const useGoogleCalendar = () => {
   // Funzione per il logout
   const signOut = async () => {
     try {
-      const token = window.gapi.client.getToken();
-      if (token) {
+      console.log('🚪 Logout Google Calendar...');
+      
+      // Pulisci refresh timer
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+        refreshIntervalRef.current = null;
+      }
+      
+      const token = window.gapi?.client?.getToken();
+      if (token && token.access_token) {
+        // Revoca il token
         window.google.accounts.oauth2.revoke(token.access_token, () => {
           console.log('✅ Token revocato');
         });
@@ -432,27 +418,87 @@ export const useGoogleCalendar = () => {
         window.gapi.client.setToken(null);
       }
       
-      clearStoredToken();
+      clearAuthState();
       setIsAuthenticated(false);
       setEvents([]);
       setAvailableCalendars([]);
       setSelectedCalendars(['primary']);
-      console.log('✅ Logout completato e dati puliti');
+      setError(null);
+      
+      console.log('✅ Logout completato');
       
     } catch (err) {
       console.error('❌ Errore durante logout:', err);
     }
   };
 
-  // 🆕 FUNZIONE AGGIORNATA PER FETCH MULTI-CALENDARIO
+  // FETCH CALENDARI DISPONIBILI
+  const fetchAvailableCalendars = async () => {
+    if (!gapi || !isAuthenticated) return;
+
+    setLoadingCalendars(true);
+    
+    try {
+      const response = await gapi.client.calendar.calendarList.list({
+        minAccessRole: 'reader'
+      });
+
+      const calendars = response.result.items || [];
+      const customNames = loadCustomNames();
+
+      const formattedCalendars = calendars.map(cal => ({
+        id: cal.id,
+        name: cal.summary,
+        displayName: customNames[cal.id] || cal.summary,
+        description: cal.description,
+        primary: cal.primary === true,
+        backgroundColor: cal.backgroundColor || '#1976d2',
+        foregroundColor: cal.foregroundColor || '#ffffff',
+        accessRole: cal.accessRole,
+        selected: cal.selected !== false,
+        timeZone: cal.timeZone
+      }));
+
+      formattedCalendars.sort((a, b) => {
+        if (a.primary) return -1;
+        if (b.primary) return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      setAvailableCalendars(formattedCalendars);
+      
+      const savedFilters = loadCalendarFilters();
+      setSelectedCalendars(savedFilters);
+
+    } catch (err) {
+      console.error('❌ Errore recupero calendari:', err);
+      
+      // 🆕 GESTIONE AUTOMATICA TOKEN SCADUTO
+      if (err.status === 401) {
+        const refreshToken = localStorage.getItem(GOOGLE_REFRESH_TOKEN_KEY);
+        if (refreshToken) {
+          console.log('🔄 Token scaduto durante fetch, tentativo refresh...');
+          const success = await refreshAccessToken(refreshToken);
+          if (success) {
+            // Riprova il fetch
+            return fetchAvailableCalendars();
+          }
+        }
+      }
+      
+      setError(`Errore nel caricamento calendari: ${err.message}`);
+    } finally {
+      setLoadingCalendars(false);
+    }
+  };
+
+  // FETCH EVENTI CON GESTIONE AUTOMATICA REFRESH
   const fetchWeekEvents = async () => {
     if (!isAuthenticated || !gapi) {
-      console.log('⚠️ Non autenticato o GAPI non pronto');
       return;
     }
 
     if (selectedCalendars.length === 0) {
-      console.log('⚠️ Nessun calendario selezionato');
       setEvents([]);
       return;
     }
@@ -461,39 +507,28 @@ export const useGoogleCalendar = () => {
     setError(null);
 
     try {
-      // Verifica che il token sia ancora valido
-      const savedToken = loadTokenFromStorage();
-      if (!savedToken) {
-        console.log('⚠️ Token scaduto durante fetch, reautenticazione necessaria');
-        setIsAuthenticated(false);
-        setError('Sessione scaduta. Effettua nuovamente il login.');
-        setLoading(false);
-        return;
+      // 🆕 CHECK TOKEN AUTOMATICO
+      const authState = loadAuthState();
+      if (authState && authState.needsRefresh) {
+        const success = await refreshAccessToken(authState.refreshToken);
+        if (!success) {
+          setLoading(false);
+          return;
+        }
       }
 
-      // Calcola inizio e fine settimana
       const now = new Date();
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-      startOfWeek.setHours(0, 0, 0, 0);
-      
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 7);
+      const endOfWeek = new Date(now);
+      endOfWeek.setDate(now.getDate() + 7);
       endOfWeek.setHours(23, 59, 59, 999);
 
-      console.log('📅 Caricamento eventi da', startOfWeek.toISOString(), 'a', endOfWeek.toISOString());
-      console.log('📅 Calendari selezionati:', selectedCalendars);
-
-      // 🆕 FETCH DA CALENDARI MULTIPLI
       const allEvents = [];
       
       for (const calendarId of selectedCalendars) {
         try {
-          console.log(`📅 Caricando eventi da calendario: ${calendarId}`);
-          
           const response = await gapi.client.calendar.events.list({
             calendarId: calendarId,
-            timeMin: startOfWeek.toISOString(),
+            timeMin: now.toISOString(),
             timeMax: endOfWeek.toISOString(),
             showDeleted: false,
             singleEvents: true,
@@ -501,54 +536,55 @@ export const useGoogleCalendar = () => {
             orderBy: 'startTime'
           });
 
-          const items = response.result.items || [];
-          
-          // Trova info calendario per aggiungere colore
-          const calendarInfo = availableCalendars.find(cal => cal.id === calendarId);
-          
-          // Trasforma gli eventi aggiungendo info sul calendario
-          const formattedEvents = items.map(event => ({
+          const events = response.result.items || [];
+
+          const calendarInfo = availableCalendars.find(cal => cal.id === calendarId) || { 
+            name: calendarId === 'primary' ? 'Principale' : calendarId,
+            backgroundColor: '#1976d2'
+          };
+
+          const formattedEvents = events.map(event => ({
             id: event.id,
-            title: event.summary || 'Evento senza titolo',
-            start: event.start.dateTime || event.start.date,
-            end: event.end.dateTime || event.end.date,
-            allDay: !event.start.dateTime,
+            title: event.summary || 'Senza titolo',
+            start: event.start?.dateTime || event.start?.date,
+            end: event.end?.dateTime || event.end?.date,
+            allDay: !event.start?.dateTime,
             description: event.description || '',
             location: event.location || '',
-            attendees: event.attendees || [],
-            creator: event.creator,
-            htmlLink: event.htmlLink,
-            status: event.status,
-            // 🆕 INFO CALENDARIO
             calendarId: calendarId,
-            calendarName: calendarInfo?.name || calendarId,
-            calendarColor: calendarInfo?.backgroundColor || '#4285f4'
+            calendarName: calendarInfo.displayName || calendarInfo.name,
+            calendarColor: calendarInfo.backgroundColor,
+            htmlLink: event.htmlLink,
+            status: event.status
           }));
 
           allEvents.push(...formattedEvents);
-          
-          console.log(`✅ ${formattedEvents.length} eventi caricati da ${calendarInfo?.name || calendarId}`);
-          
-        } catch (calErr) {
-          console.error(`❌ Errore caricamento calendario ${calendarId}:`, calErr);
-          // Continua con gli altri calendari anche se uno fallisce
+
+        } catch (calError) {
+          console.error(`❌ Errore caricamento calendario ${calendarId}:`, calError);
         }
       }
 
-      // Ordina tutti gli eventi per data
-      allEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
+      const futureEvents = filterFutureEvents(allEvents);
+      futureEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
 
-      setEvents(allEvents);
-      console.log('✅ Eventi totali caricati:', allEvents.length, 'da', selectedCalendars.length, 'calendari');
-      
+      setEvents(futureEvents);
+
     } catch (err) {
       console.error('❌ Errore caricamento eventi:', err);
       
+      // 🆕 GESTIONE AUTOMATICA 401
       if (err.status === 401) {
-        console.log('🔄 Token scaduto, rimozione e riautenticazione necessaria...');
-        clearStoredToken();
-        setIsAuthenticated(false);
-        setError('Sessione scaduta. Effettua nuovamente il login.');
+        const refreshToken = localStorage.getItem(GOOGLE_REFRESH_TOKEN_KEY);
+        if (refreshToken) {
+          const success = await refreshAccessToken(refreshToken);
+          if (success) {
+            return fetchWeekEvents(); // Riprova
+          }
+        } else {
+          setIsAuthenticated(false);
+          setError('Sessione scaduta. Effettua nuovamente il login.');
+        }
       } else {
         setError(`Errore nel caricamento degli eventi: ${err.message}`);
       }
@@ -557,26 +593,139 @@ export const useGoogleCalendar = () => {
     }
   };
 
-  // Auto-refresh eventi quando cambiano i calendari selezionati
+  // INIZIALIZZAZIONE
+  useEffect(() => {
+    const initializeGoogleServices = async () => {
+      if (!GOOGLE_API_KEY || !GOOGLE_CLIENT_ID) {
+        const missingCreds = [];
+        if (!GOOGLE_API_KEY) missingCreds.push('REACT_APP_GOOGLE_API_KEY');
+        if (!GOOGLE_CLIENT_ID) missingCreds.push('REACT_APP_GOOGLE_CLIENT_ID');
+        
+        setError(`Credenziali mancanti: ${missingCreds.join(', ')}`);
+        return;
+      }
+
+      try {
+        await loadGapiScript();
+        await loadGisScript();
+
+        await new Promise((resolve, reject) => {
+          window.gapi.load('client', {
+            callback: resolve,
+            onerror: reject
+          });
+        });
+
+        await window.gapi.client.init({
+          apiKey: GOOGLE_API_KEY,
+          discoveryDocs: [DISCOVERY_DOC],
+        });
+
+        setGapi(window.gapi);
+
+        // 🆕 TOKEN CLIENT MIGLIORATO
+        const client = window.google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: SCOPES,
+          callback: (response) => {
+            console.log('🔐 Token ricevuto:', response);
+            if (response.access_token) {
+              window.gapi.client.setToken({
+                access_token: response.access_token
+              });
+              
+              // 🆕 SALVA CON PIÙ DATI
+              const authData = {
+                token: {
+                  access_token: response.access_token,
+                  expires_in: response.expires_in || 3600
+                },
+                tokenExpiry: Date.now() + ((response.expires_in || 3600) * 1000),
+                refresh_token: response.refresh_token // Potrebbe non essere sempre presente
+              };
+              
+              saveAuthState(authData);
+              setIsAuthenticated(true);
+              setError(null);
+              
+              // Setup refresh automatico
+              setupTokenRefresh(authData.tokenExpiry);
+              
+              console.log('✅ Autenticazione completata con persistenza migliorata');
+            }
+          },
+          error_callback: (error) => {
+            console.error('❌ Errore OAuth:', error);
+            setError(`Errore autenticazione: ${error.type || error.message}`);
+            clearAuthState();
+          }
+        });
+
+        setTokenClient(client);
+
+        // 🆕 AUTO-RESTORE MIGLIORATO
+        const authState = loadAuthState();
+        if (authState) {
+          if (authState.needsRefresh && authState.refreshToken) {
+            console.log('🔄 Token salvato necessita refresh...');
+            const success = await refreshAccessToken(authState.refreshToken);
+            if (success) {
+              setIsAuthenticated(true);
+              const newExpiry = parseInt(localStorage.getItem(GOOGLE_TOKEN_EXPIRY_KEY));
+              setupTokenRefresh(newExpiry);
+            }
+          } else if (!authState.needsRefresh) {
+            console.log('✅ Ripristino sessione da storage migliorato...');
+            window.gapi.client.setToken({
+              access_token: authState.token.access_token
+            });
+            setIsAuthenticated(true);
+            setupTokenRefresh(authState.expiry);
+          }
+        }
+
+        console.log('🎉 Google Calendar API inizializzato con persistenza migliorata');
+
+      } catch (err) {
+        console.error('❌ Errore inizializzazione:', err);
+        setError(`Errore inizializzazione: ${err.message || err}`);
+      }
+    };
+
+    initializeGoogleServices();
+
+    // Cleanup al unmount
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
+  }, [setupTokenRefresh, refreshAccessToken]);
+
+  // Altri useEffect...
+  useEffect(() => {
+    if (isAuthenticated && gapi) {
+      fetchAvailableCalendars();
+    }
+  }, [isAuthenticated, gapi]);
+
   useEffect(() => {
     if (isAuthenticated && selectedCalendars.length > 0) {
       fetchWeekEvents();
     }
   }, [isAuthenticated, selectedCalendars]);
 
-  // Auto-refresh eventi ogni 10 minuti se autenticato
   useEffect(() => {
     if (isAuthenticated && selectedCalendars.length > 0) {
       const interval = setInterval(() => {
-        console.log('🔄 Auto-refresh eventi Google Calendar...');
         fetchWeekEvents();
-      }, 10 * 60 * 1000); // 10 minuti
+      }, 10 * 60 * 1000);
 
       return () => clearInterval(interval);
     }
   }, [isAuthenticated, selectedCalendars]);
 
-  // FUNZIONI UTILITY PER FILTRARE EVENTI
+  // FUNZIONI UTILITY
   const getTodayEvents = () => {
     const today = new Date().toDateString();
     return events.filter(event => {
@@ -594,6 +743,14 @@ export const useGoogleCalendar = () => {
       const eventDate = new Date(event.start);
       return eventDate >= now && eventDate <= threeDaysLater;
     }).slice(0, 5);
+  };
+
+  const getFutureEvents = () => {
+    const now = new Date();
+    return events.filter(event => {
+      const eventStart = new Date(event.start);
+      return eventStart >= now;
+    });
   };
 
   return {
@@ -615,20 +772,22 @@ export const useGoogleCalendar = () => {
     selectAllCalendars,
     selectNoneCalendars,
     fetchAvailableCalendars,
-    setCustomCalendarName, // 🆕
+    setCustomCalendarName,
     
     // Funzioni eventi
     fetchWeekEvents,
     getTodayEvents,
     getUpcomingEvents,
+    getFutureEvents,
     refreshEvents: fetchWeekEvents,
     
     // Utility
+    filterFutureEvents,
     checkTokenStatus: () => {
-      const savedToken = loadTokenFromStorage();
+      const authState = localStorage.getItem(GOOGLE_AUTH_STATE_KEY);
       return {
-        hasToken: !!savedToken,
-        isExpired: !savedToken
+        hasAuth: !!authState,
+        needsRefresh: authState ? JSON.parse(authState).needsRefresh : false
       };
     }
   };
